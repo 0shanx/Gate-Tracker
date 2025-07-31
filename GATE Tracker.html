@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online GATE CSE Syllabus Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        details, .card {
+            background-color: #ffffff;
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        details > summary { list-style: none; background-color: #f9fafb; }
+        details > summary::-webkit-details-marker { display: none; }
+        details summary .arrow { transition: transform 0.2s; }
+        details[open] summary .arrow { transform: rotate(90deg); }
+        .progress-bar-container { position: relative; width: 100%; }
+        .progress-bar-bg { background-color: #e5e7eb; }
+        .progress-bar-fg {
+            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
+            transition: width 0.5s ease-in-out;
+        }
+        .progress-text {
+            position: absolute; left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            color: #374151; font-size: 0.75rem; font-weight: 600;
+        }
+        .custom-checkbox {
+            appearance: none; background-color: #fff; border: 1px solid #d1d5db;
+            width: 1.25rem; height: 1.25rem; border-radius: 0.375rem;
+            display: inline-block; position: relative; cursor: pointer; transition: all 0.2s;
+        }
+        .custom-checkbox:hover { border-color: #a5b4fc; }
+        .custom-checkbox:checked {
+            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
+            border-color: #4f46e5;
+        }
+        .custom-checkbox:checked::after {
+            content: '✔'; position: absolute; color: white; font-size: 0.8rem;
+            font-weight: bold; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5); display: flex;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .completion-icon { display: none; color: #22c55e; }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border-bottom: 3px solid transparent;
+            color: #4b5563; /* gray-600 */
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            border-bottom-color: #4f46e5;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+        
+        @media (min-width: 768px) {
+            .topic-grid-container {
+                display: grid;
+                grid-template-columns: 1fr repeat(7, 4rem);
+                gap: 0.5rem;
+                align-items: center;
+            }
+            .topic-grid-header {
+                display: contents; /* Makes children part of the grid */
+            }
+            .topic-item {
+                display: contents; /* Makes children part of the grid */
+            }
+            .topic-summary {
+                padding: 0.75rem 0.5rem;
+                border-bottom: 1px solid #f3f4f6;
+            }
+            .checkbox-grid {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                border-bottom: 1px solid #f3f4f6;
+                padding: 0.75rem 0;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .topic-grid-header {
+                display: none;
+            }
+            .topic-item {
+                border: 1px solid #e5e7eb;
+                border-radius: 0.5rem;
+                margin-bottom: 0.5rem;
+                overflow: hidden;
+            }
+            .topic-summary {
+                padding: 0.75rem;
+                font-weight: 600;
+                cursor: pointer;
+            }
+            .checkbox-grid {
+                padding: 0.75rem;
+                border-top: 1px solid #e5e7eb;
+                display: none; /* Hidden by default on mobile */
+            }
+            .checkbox-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div id="auth-container" class="flex items-center justify-center h-screen">
+        <div class="text-center p-8 bg-white rounded-xl shadow-2xl">
+            <h1 class="text-3xl font-bold text-gray-900">GATE CSE Syllabus Tracker</h1>
+            <p class="mt-2 text-gray-600">Please sign in to track your progress online.</p>
+            <button id="login-btn" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center space-x-2 transition-transform transform hover:scale-105">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,36.59,44,31.016,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+                <span>Sign in with Google</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="app-container" class="container mx-auto p-4 sm:p-6 md:p-8 hidden">
+        <header class="mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 text-center sm:text-left">GATE CSE Syllabus Tracker</h1>
+                    <p class="mt-1 text-lg text-gray-600 text-center sm:text-left">Your dynamic and modern study companion.</p>
+                </div>
+                <div id="user-profile" class="flex items-center gap-4">
+                    <!-- User info will be injected here -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="mb-6 border-b border-gray-300">
+            <nav class="flex space-x-4" aria-label="Tabs">
+                <button id="tab-syllabus" class="tab-btn active">Syllabus</button>
+                <button id="tab-dashboard" class="tab-btn">Dashboard</button>
+            </nav>
+        </div>
+
+        <!-- Syllabus Content -->
+        <div id="syllabus-content">
+            <div class="card p-6 rounded-xl shadow-lg mb-8">
+                <h2 class="text-xl font-semibold mb-3">Overall Progress</h2>
+                <div class="relative h-6">
+                    <div class="absolute inset-0 bg-gray-200 rounded-full flex justify-center items-center">
+                        <span id="overall-progress-text-bg" class="text-gray-700 text-xs font-semibold">0%</span>
+                    </div>
+                    <div id="overall-progress" class="absolute inset-0 progress-bar-fg rounded-full flex justify-center items-center overflow-hidden" style="width: 0%;">
+                        <span id="overall-progress-text-fg" class="text-white text-xs font-semibold">0%</span>
+                    </div>
+                </div>
+            </div>
+            <div id="syllabus-container" class="space-y-4"></div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard-content" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Insight Cards -->
+                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
+                    <div class="bg-indigo-100 p-3 rounded-full"><svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                    <div><h4 class="text-sm font-medium text-gray-500">Total Completion</h4><p id="metric-total-completion" class="text-2xl font-bold mt-1">0%</p></div>
+                </div>
+                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
+                    <div class="bg-green-100 p-3 rounded-full"><svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z"></path></svg></div>
+                    <div><h4 class="text-sm font-medium text-gray-500">Subjects Mastered</h4><p id="metric-subjects-mastered" class="text-2xl font-bold mt-1">0</p></div>
+                </div>
+                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
+                     <div class="bg-blue-100 p-3 rounded-full"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg></div>
+                    <div><h4 class="text-sm font-medium text-gray-500">Topics Completed</h4><p id="metric-topics-completed" class="text-2xl font-bold mt-1">0</p></div>
+                </div>
+                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
+                    <div class="bg-purple-100 p-3 rounded-full"><svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5V4H4zm0 0L2 2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2M15 4v5h5V4h-5zm0 0l-2-2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2"></path></svg></div>
+                    <div><h4 class="text-sm font-medium text-gray-500">Total Revisions</h4><p id="metric-revisions-done" class="text-2xl font-bold mt-1">0</p></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-semibold text-center mb-4">Subject Strengths</h3>
+                    <div class="relative h-80 md:h-auto">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+                <div class="card p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-semibold text-center mb-4">Subject Progress</h3>
+                    <div class="relative h-96 md:h-auto">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="reset-container" class="mt-12 text-center hidden">
+            <button id="reset-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow transition-transform transform hover:scale-105">
+                Reset All Progress
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="reset-modal" class="modal-overlay hidden">
+        <div class="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm mx-4">
+            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
+            <p class="text-gray-600 mb-6">This will permanently delete all your tracked progress. This action cannot be undone.</p>
+            <div class="flex justify-center space-x-4">
+                <button id="cancel-reset" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg">Cancel</button>
+                <button id="confirm-reset" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- FIREBASE CONFIG (WILL BE PROVIDED BY THE ENVIRONMENT) ---
+            if (typeof __firebase_config === 'undefined') {
+                document.getElementById('auth-container').innerHTML = `<div class="text-center p-8 bg-white rounded-xl shadow-2xl"><h2 class="text-2xl font-bold text-red-600">Error</h2><p class="mt-2 text-gray-600">Firebase configuration is missing. This app cannot function.</p></div>`;
+                return;
+            }
+            const firebaseConfig = JSON.parse(__firebase_config);
+            
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+            const provider = new GoogleAuthProvider();
+
+            const syllabus = {
+                "Computer Networks": {
+                    "Topics": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCPStack /Protocol"]
+                },
+                "Operating Systems": {
+                    "Topics": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"]
+                },
+                "C-Programming": {
+                    "Topics": ["Data Types & Operators", "Control Flow Statements", "Functions & Storage Classes", "Arrays & Pointers", "Strings", "Structures & Union", "Miscellaneous"]
+                },
+                "Data Structures": {
+                    "Topics": ["Introduction", "Arrays", "Linked List", "Stack & Queues", "Trees", "Graphs", "Hashing"]
+                },
+                "Digital Logic": {
+                    "Topics": ["Logic Gates", "Minimization", "Combinational Circuit", "Sequential Circuit", "Number System"]
+                },
+                "Theory of Computation": {
+                    "Topics": ["Finite Automata", "Push down Automata", "Turing Machine", "Decidability"]
+                },
+                "Compiler Design": {
+                    "Topics": ["Lexical & Syntax Analysis", "Syntax Directed Translation", "Intermediate Code & Optimization"]
+                },
+                "Algorithms": {
+                    "Topics": ["Analysis Of Algorithms", "Design Strategies", "Greedy Method", "Dynamic Programming", "Graph Algorithms", "Heap Algorithms", "Backtracking - Branch & Bound"]
+                },
+                "Database Management System": {
+                    "Topics": ["FD's and Normalisation", "Transaction & Concurrency", "ER Model", "Query Language", "File Organisation & Indexing"]
+                },
+                "Computer Organisation & Architecture": {
+                    "Topics": ["Introduction", "Machine Instruction & Addressing", "Floating Point Representation", "ALU and Control Unit", "Instruction And Pipelining", "Cache Memory", "Secondary Memory & IO"]
+                },
+                "Discrete Mathematics": {
+                    "Topics": ["Graph Theory", "Mathematical Logic", "Set Theory", "Combinatorics"]
+                },
+                "Engineering Mathematics": {
+                    "Topics": ["Linear Algebra", "Calculus", "Probability & Statistics"]
+                }
+            };
+            
+            const columns = [
+                { label: 'Notes', id: 'notes' },
+                { label: 'R1', id: 'r1' },
+                { label: 'R2', id: 'r2' },
+                { label: 'R3', id: 'r3' },
+                { label: 'DPP', id: 'dpp' },
+                { label: 'PYQ', id: 'pyq1' },
+                { label: 'PYQ', id: 'pyq2' }
+            ];
+            
+            const subjectColors = [
+                'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
+                'rgba(199, 199, 199, 0.6)', 'rgba(83, 102, 255, 0.6)', 'rgba(10, 207, 131, 0.6)',
+                'rgba(245, 69, 151, 0.6)', 'rgba(255, 99, 71, 0.6)', 'rgba(60, 179, 113, 0.6)'
+            ];
+
+            const container = document.getElementById('syllabus-container');
+            const overallProgressBar = document.getElementById('overall-progress');
+            const overallProgressTextBg = document.getElementById('overall-progress-text-bg');
+            const overallProgressTextFg = document.getElementById('overall-progress-text-fg');
+            let totalCheckboxes = 0;
+            let checkboxStates = {};
+            let radarChart, barChart;
+            let unsubscribe;
+            let currentUser = null;
+            const subjectCompletionState = {};
+
+            const authContainer = document.getElementById('auth-container');
+            const appContainer = document.getElementById('app-container');
+            const loginBtn = document.getElementById('login-btn');
+            const userProfileContainer = document.getElementById('user-profile');
+            const resetContainer = document.getElementById('reset-container');
+
+            function generateSyllabusHTML() {
+                 let delay = 0;
+                for (const subject in syllabus) {
+                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                    subjectCompletionState[subjectId] = false;
+                    
+                    const detailsElement = document.createElement('details');
+                    detailsElement.className = 'bg-white rounded-xl shadow-lg overflow-hidden';
+                    detailsElement.style.animationDelay = `${delay}ms`;
+                    delay += 50;
+                    
+                    let subjectHTML = `
+                        <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center bg-gray-50 border-b border-gray-200 gap-4">
+                            <div class="flex items-center space-x-2 self-start md:self-center">
+                                <span id="icon-${subjectId}" class="completion-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.705L7.7 11.292l2.299 2.295 5.294-5.294 1.414 1.414-6.706 6.706z"></path></svg>
+                                </span>
+                                <h2 class="text-xl font-semibold text-gray-800">${subject}</h2>
+                            </div>
+                            <div class="w-full md:w-auto flex items-center space-x-4">
+                                <div class="relative flex-grow h-5">
+                                    <div class="absolute inset-0 bg-gray-200 rounded-full flex justify-center items-center">
+                                        <span id="progress-text-bg-${subjectId}" class="text-gray-700 text-xs font-semibold">0%</span>
+                                    </div>
+                                    <div id="progress-${subjectId}" class="absolute inset-0 progress-bar-fg rounded-full flex justify-center items-center overflow-hidden" style="width: 0%;">
+                                        <span id="progress-text-fg-${subjectId}" class="text-white text-xs font-semibold">0%</span>
+                                    </div>
+                                </div>
+                                <span class="arrow text-gray-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </span>
+                            </div>
+                        </summary>
+                        <div class="p-2 md:p-5 overflow-x-auto">
+                            <table class="w-full text-left responsive-table">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="py-2 px-2 font-semibold">Chapter</th>
+                                        ${columns.map(col => `<th class="w-12 text-center py-2 font-semibold">${col.label}</th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+
+                    for (const subtopic in syllabus[subject]) {
+                        syllabus[subject][subtopic].forEach((item, index) => {
+                            const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
+                            totalCheckboxes += columns.length;
+                            subjectHTML += `
+                                <tr>
+                                    <td class="py-3 px-2 text-gray-600 topic-cell">${item}</td>
+                                    ${columns.map(col => `
+                                        <td class="w-12 text-center" data-label="${col.label}">
+                                            <input type="checkbox" class="custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
+                                        </td>
+                                    `).join('')}
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    subjectHTML += `</tbody></table></div>`;
+                    detailsElement.innerHTML = subjectHTML;
+                    container.appendChild(detailsElement);
+                }
+            }
+
+            function initCharts() {
+                const fontColor = '#1f2937';
+                const gridColor = 'rgba(0, 0, 0, 0.1)';
+
+                const chartLabels = Object.keys(syllabus).map(s => {
+                    const abbreviations = {
+                        "Computer Networks": "CN",
+                        "Operating Systems": "OS",
+                        "Data Structures": "DS",
+                        "Digital Logic": "DSD",
+                        "Theory of Computation": "TOC",
+                        "Compiler Design": "CD",
+                        "Algorithms": "Algo",
+                        "Computer Organisation & Architecture": "COA",
+                        "Discrete Mathematics": "DM",
+                        "Engineering Mathematics": "EM",
+                        "Database Management System": "DBMS",
+                        "C-Programming": "C Prog"
+                    };
+                    return abbreviations[s] || s;
+                });
+
+                const radarCtx = document.getElementById('radarChart').getContext('2d');
+                radarChart = new Chart(radarCtx, {
+                    type: 'radar',
+                    data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: 'rgba(79, 70, 229, 0.2)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(79, 70, 229, 1)' }] },
+                    options: { 
+                        responsive: true, maintainAspectRatio: false, 
+                        scales: { 
+                            r: { 
+                                beginAtZero: true, max: 100, 
+                                ticks: { stepSize: 20, backdropColor: 'transparent', color: fontColor },
+                                pointLabels: { color: fontColor, font: { size: 12, weight: '500' } },
+                                grid: { color: gridColor }
+                            } 
+                        }, 
+                        plugins: { legend: { display: false } } 
+                    }
+                });
+
+                const barCtx = document.getElementById('barChart').getContext('2d');
+                barChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: subjectColors, borderColor: subjectColors.map(c => c.replace('0.6', '1')), borderWidth: 1 }] },
+                    options: { 
+                        responsive: true, maintainAspectRatio: false, indexAxis: 'y', 
+                        scales: { 
+                            x: { beginAtZero: true, max: 100, ticks: { color: fontColor }, grid: { color: gridColor } },
+                            y: { ticks: { color: fontColor, font: { weight: '500' } }, grid: { color: 'transparent' } }
+                        }, 
+                        plugins: { legend: { display: false } } 
+                    }
+                });
+            }
+
+            function updateDashboardMetrics(subjectPercentages, totalPercentage) {
+                document.getElementById('metric-total-completion').textContent = `${totalPercentage}%`;
+                const subjectsMastered = subjectPercentages.filter(p => p === 100).length;
+                document.getElementById('metric-subjects-mastered').textContent = `${subjectsMastered} / ${Object.keys(syllabus).length}`;
+                let revisionsDone = 0;
+                for (const id in checkboxStates) {
+                    if (checkboxStates[id] && (id.includes('-r1') || id.includes('-r2') || id.includes('-r3'))) {
+                        revisionsDone++;
+                    }
+                }
+                let completedTopicCount = 0;
+                for (const subject in syllabus) {
+                    for(const sub in syllabus[subject]){
+                        syllabus[subject][sub].forEach((item, index) => {
+                            const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                            const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
+                            let allChecked = true;
+                            columns.forEach(col => {
+                                if (!checkboxStates[`${itemId}-${col.id}`]) allChecked = false;
+                            });
+                            if (allChecked) completedTopicCount++;
+                        });
+                    }
+                }
+                document.getElementById('metric-topics-completed').textContent = `${completedTopicCount}`;
+                document.getElementById('metric-revisions-done').textContent = revisionsDone;
+            }
+
+            function updateCharts(subjectPercentages) {
+                radarChart.data.datasets[0].data = subjectPercentages;
+                barChart.data.datasets[0].data = subjectPercentages;
+                radarChart.update();
+                barChart.update();
+            }
+
+            function updateProgress() {
+                const subjectProgress = {};
+                const subjectTotals = {};
+                for (const subject in syllabus) {
+                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                    subjectProgress[subjectId] = 0;
+                    subjectTotals[subjectId] = 0;
+                    for (const subtopic in syllabus[subject]) {
+                        subjectTotals[subjectId] += syllabus[subject][subtopic].length * columns.length;
+                    }
+                }
+
+                let totalChecked = 0;
+                for (const id in checkboxStates) {
+                    if (checkboxStates[id]) {
+                        totalChecked++;
+                        const checkbox = document.getElementById(id);
+                        if(checkbox) {
+                            const subjectId = checkbox.dataset.subject;
+                            if (subjectId && subjectProgress.hasOwnProperty(subjectId)) subjectProgress[subjectId]++;
+                        }
+                    }
+                }
+                
+                const subjectPercentages = [];
+                for (const subjectId in subjectProgress) {
+                    const progressBar = document.getElementById(`progress-${subjectId}`);
+                    const progressTextBg = document.getElementById(`progress-text-bg-${subjectId}`);
+                    const progressTextFg = document.getElementById(`progress-text-fg-${subjectId}`);
+                    const icon = document.getElementById(`icon-${subjectId}`);
+                    
+                    if (progressBar && progressTextBg && progressTextFg) {
+                        const percentage = subjectTotals[subjectId] > 0 ? Math.round((subjectProgress[subjectId] / subjectTotals[subjectId]) * 100) : 0;
+                        subjectPercentages.push(percentage);
+                        progressBar.style.width = `${percentage}%`;
+                        progressTextBg.textContent = `${percentage}%`;
+                        progressTextFg.textContent = `${percentage}%`;
+                        icon.style.display = percentage === 100 ? 'inline-block' : 'none';
+
+                        if (percentage === 100 && !subjectCompletionState[subjectId]) {
+                            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                            subjectCompletionState[subjectId] = true;
+                        } else if (percentage < 100) {
+                            subjectCompletionState[subjectId] = false;
+                        }
+                    }
+                }
+
+                const overallPercentage = totalCheckboxes > 0 ? Math.round((totalChecked / totalCheckboxes) * 100) : 0;
+                overallProgressBar.style.width = `${overallPercentage}%`;
+                overallProgressTextBg.textContent = `${overallPercentage}%`;
+                overallProgressTextFg.textContent = `${overallPercentage}%`;
+
+                updateCharts(subjectPercentages);
+                updateDashboardMetrics(subjectPercentages, overallPercentage);
+            }
+
+            async function handleCheckboxChange(e) {
+                if (e.target.type === 'checkbox' && currentUser) {
+                    const id = e.target.id;
+                    checkboxStates[id] = e.target.checked;
+                    updateProgress(); // Optimistic update
+                    const userDocRef = doc(db, "users", currentUser.uid);
+                    await setDoc(userDocRef, { progress: checkboxStates }, { merge: true });
+                }
+            }
+
+            async function resetAllProgress() {
+                if(currentUser) {
+                    checkboxStates = {};
+                    const userDocRef = doc(db, "users", currentUser.uid);
+                    await setDoc(userDocRef, { progress: {} }); // Overwrite with empty object
+                }
+            }
+
+            function setupFirestoreListener(userId) {
+                if (unsubscribe) unsubscribe(); // Detach any old listener
+                const userDocRef = doc(db, "users", userId);
+                unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists() && docSnap.data().progress) {
+                        checkboxStates = docSnap.data().progress;
+                    } else {
+                        checkboxStates = {};
+                    }
+                    // Load state into checkboxes
+                    document.querySelectorAll('.custom-checkbox').forEach(cb => {
+                        cb.checked = checkboxStates[cb.id] || false;
+                    });
+                    updateProgress();
+                });
+            }
+
+            // --- Auth UI Logic ---
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    authContainer.classList.add('hidden');
+                    appContainer.classList.remove('hidden');
+                    resetContainer.classList.remove('hidden');
+                    userProfileContainer.innerHTML = `
+                        <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
+                        <span class="font-semibold hidden sm:inline">${user.displayName}</span>
+                        <button id="logout-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm">Sign Out</button>
+                    `;
+                    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+                    setupFirestoreListener(user.uid);
+                } else {
+                    currentUser = null;
+                    authContainer.classList.remove('hidden');
+                    appContainer.classList.add('hidden');
+                    resetContainer.classList.add('hidden');
+                    userProfileContainer.innerHTML = '';
+                    if (unsubscribe) unsubscribe();
+                    checkboxStates = {};
+                    updateProgress();
+                }
+            });
+
+            loginBtn.addEventListener('click', () => {
+                signInWithPopup(auth, provider).catch(error => console.error("Login failed:", error));
+            });
+
+            // --- Modal Logic ---
+            const modal = document.getElementById('reset-modal');
+            const resetBtn = document.getElementById('reset-btn');
+            const cancelBtn = document.getElementById('cancel-reset');
+            const confirmBtn = document.getElementById('confirm-reset');
+            resetBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+            cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            confirmBtn.addEventListener('click', () => {
+                resetAllProgress();
+                modal.classList.add('hidden');
+            });
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+            // --- Tab Logic ---
+            const syllabusTab = document.getElementById('tab-syllabus');
+            const dashboardTab = document.getElementById('tab-dashboard');
+            const syllabusContent = document.getElementById('syllabus-content');
+            const dashboardContent = document.getElementById('dashboard-content');
+
+            syllabusTab.addEventListener('click', () => {
+                syllabusTab.classList.add('active');
+                dashboardTab.classList.remove('active');
+                syllabusContent.classList.remove('hidden');
+                dashboardContent.classList.add('hidden');
+            });
+
+            dashboardTab.addEventListener('click', () => {
+                dashboardTab.classList.add('active');
+                syllabusTab.classList.remove('active');
+                dashboardContent.classList.remove('hidden');
+                syllabusContent.classList.add('hidden');
+            });
+
+            // --- Initial setup ---
+            generateSyllabusHTML();
+            initCharts();
+            container.addEventListener('change', handleCheckboxChange);
+        });
+    </script>
+</body>
+</html>
+
