@@ -236,11 +236,15 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             // --- FIREBASE CONFIG (WILL BE PROVIDED BY THE ENVIRONMENT) ---
-            if (typeof __firebase_config === 'undefined') {
-                document.getElementById('auth-container').innerHTML = `<div class="text-center p-8 bg-white rounded-xl shadow-2xl"><h2 class="text-2xl font-bold text-red-600">Error</h2><p class="mt-2 text-gray-600">Firebase configuration is missing. This app cannot function.</p></div>`;
-                return;
-            }
-            const firebaseConfig = JSON.parse(__firebase_config);
+            const firebaseConfig = {
+                apiKey: "AIzaSyBUTgPzWbMEzzdWbdQUY806SAdUWvmUz8",
+                authDomain: "gate-tracker-a561f.firebaseapp.com",
+                projectId: "gate-tracker-a561f",
+                storageBucket: "gate-tracker-a561f.appspot.com",
+                messagingSenderId: "322542809047",
+                appId: "1:322542809047:web:86e719394ca02b6ef32592",
+                measurementId: "G-2MBR978R7G"
+            };
             
             // Initialize Firebase
             const app = initializeApp(firebaseConfig);
