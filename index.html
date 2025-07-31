@@ -232,10 +232,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithRedirect, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
         document.addEventListener('DOMContentLoaded', () => {
-            // --- FIREBASE CONFIG (WILL BE PROVIDED BY THE ENVIRONMENT) ---
+            // --- FIREBASE CONFIG ---
             const firebaseConfig = {
                 apiKey: "AIzaSyBUTgPzWbMEzzdWbdQUY806SAdUWvmUz8",
                 authDomain: "gate-tracker-a561f.firebaseapp.com",
@@ -601,7 +601,7 @@
             });
 
             loginBtn.addEventListener('click', () => {
-                signInWithPopup(auth, provider).catch(error => console.error("Login failed:", error));
+                signInWithRedirect(auth, provider);
             });
 
             // --- Modal Logic ---
@@ -645,4 +645,3 @@
     </script>
 </body>
 </html>
-
