@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online GATE CSE Syllabus Tracker</title>
+    <title>GATE CSE Prepration Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -140,7 +140,7 @@
         <header class="mb-8">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 text-center sm:text-left">GATE CSE Syllabus Tracker</h1>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 text-center sm:text-left">GATE CSE Preparation Tracker</h1>
                     <p class="mt-1 text-lg text-gray-600 text-center sm:text-left">Your dynamic and modern study companion.</p>
                 </div>
                 <div id="user-profile" class="flex items-center gap-4">
@@ -584,7 +584,7 @@
                     resetContainer.classList.remove('hidden');
                     userProfileContainer.innerHTML = `
                         <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
-                        <span class="font-semibold hidden sm:inline">${user.displayName}</span>
+                        <span class="font-semibold">${user.displayName}</span>
                     `;
                     document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
                     setupFirestoreListener(user.uid);
