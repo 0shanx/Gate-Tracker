@@ -236,7 +236,7 @@
         
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
-            apiKey: "AIzaSyBVUTqPzWbMEzzdWbdQUY806SadUWvmUz8",
+            apiKey: "AIzaSyBUTgPzWbMEzzdWbdQUY806SadUWvmUz8",
             authDomain: "gate-tracker-a561f.firebaseapp.com",
             projectId: "gate-tracker-a561f",
             storageBucket: "gate-tracker-a561f.firebasestorage.app",
@@ -251,397 +251,396 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const syllabus = {
-                "Computer Networks": {
-                    "Topics": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCPStack /Protocol"]
-                },
-                "Operating Systems": {
-                    "Topics": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"]
-                },
-                "C-Programming": {
-                    "Topics": ["Data Types & Operators", "Control Flow Statements", "Functions & Storage Classes", "Arrays & Pointers", "Strings", "Structures & Union", "Miscellaneous"]
-                },
-                "Data Structures": {
-                    "Topics": ["Introduction", "Arrays", "Linked List", "Stack & Queues", "Trees", "Graphs", "Hashing"]
-                },
-                "Digital Logic": {
-                    "Topics": ["Logic Gates", "Minimization", "Combinational Circuit", "Sequential Circuit", "Number System"]
-                },
-                "Theory of Computation": {
-                    "Topics": ["Finite Automata", "Push down Automata", "Turing Machine", "Decidability"]
-                },
-                "Compiler Design": {
-                    "Topics": ["Lexical & Syntax Analysis", "Syntax Directed Translation", "Intermediate Code & Optimization"]
-                },
-                "Algorithms": {
-                    "Topics": ["Analysis Of Algorithms", "Design Strategies", "Greedy Method", "Dynamic Programming", "Graph Algorithms", "Heap Algorithms", "Backtracking - Branch & Bound"]
-                },
-                "Database Management System": {
-                    "Topics": ["FD's and Normalisation", "Transaction & Concurrency", "ER Model", "Query Language", "File Organisation & Indexing"]
-                },
-                "Computer Organisation & Architecture": {
-                    "Topics": ["Introduction", "Machine Instruction & Addressing", "Floating Point Representation", "ALU and Control Unit", "Instruction And Pipelining", "Cache Memory", "Secondary Memory & IO"]
-                },
-                "Discrete Mathematics": {
-                    "Topics": ["Graph Theory", "Mathematical Logic", "Set Theory", "Combinatorics"]
-                },
-                "Engineering Mathematics": {
-                    "Topics": ["Linear Algebra", "Calculus", "Probability & Statistics"]
-                }
-            };
-            
-            const columns = [
-                { label: 'Notes', id: 'notes' },
-                { label: 'R1', id: 'r1' },
-                { label: 'R2', id: 'r2' },
-                { label: 'R3', id: 'r3' },
-                { label: 'DPP', id: 'dpp' },
-                { label: 'PYQ', id: 'pyq1' },
-                { label: 'PYQ', id: 'pyq2' }
-            ];
-            
-            const subjectColors = [
-                'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
-                'rgba(199, 199, 199, 0.6)', 'rgba(83, 102, 255, 0.6)', 'rgba(10, 207, 131, 0.6)',
-                'rgba(245, 69, 151, 0.6)', 'rgba(255, 99, 71, 0.6)', 'rgba(60, 179, 113, 0.6)'
-            ];
-
-            const container = document.getElementById('syllabus-container');
-            const overallProgressBar = document.getElementById('overall-progress');
-            const overallProgressTextBg = document.getElementById('overall-progress-text-bg');
-            const overallProgressTextFg = document.getElementById('overall-progress-text-fg');
-            let totalCheckboxes = 0;
-            let checkboxStates = {};
-            let radarChart, barChart;
-            let unsubscribe;
-            let currentUser = null;
-            const subjectCompletionState = {};
-
-            const authContainer = document.getElementById('auth-container');
-            const appContainer = document.getElementById('app-container');
-            const loginBtn = document.getElementById('login-btn');
-            const userProfileContainer = document.getElementById('user-profile');
-            const resetContainer = document.getElementById('reset-container');
-
-            function generateSyllabusHTML() {
-                 let delay = 0;
-                for (const subject in syllabus) {
-                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
-                    subjectCompletionState[subjectId] = false;
-                    
-                    const detailsElement = document.createElement('details');
-                    detailsElement.className = 'bg-white rounded-xl shadow-lg overflow-hidden';
-                    detailsElement.style.animationDelay = `${delay}ms`;
-                    delay += 50;
-                    
-                    let subjectHTML = `
-                        <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center bg-gray-50 border-b border-gray-200 gap-4">
-                            <div class="flex items-center space-x-2 self-start md:self-center">
-                                <span id="icon-${subjectId}" class="completion-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.705L7.7 11.292l2.299 2.295 5.294-5.294 1.414 1.414-6.706 6.706z"></path></svg>
-                                </span>
-                                <h2 class="text-xl font-semibold text-gray-800">${subject}</h2>
-                            </div>
-                            <div class="w-full md:w-auto flex items-center space-x-4">
-                                <div class="relative flex-grow h-5">
-                                    <div class="absolute inset-0 bg-gray-200 rounded-full flex justify-center items-center">
-                                        <span id="progress-text-bg-${subjectId}" class="text-gray-700 text-xs font-semibold">0%</span>
-                                    </div>
-                                    <div id="progress-${subjectId}" class="absolute inset-0 progress-bar-fg rounded-full flex justify-center items-center overflow-hidden" style="width: 0%;">
-                                        <span id="progress-text-fg-${subjectId}" class="text-white text-xs font-semibold">0%</span>
-                                    </div>
-                                </div>
-                                <span class="arrow text-gray-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </span>
-                            </div>
-                        </summary>
-                        <div class="p-2 md:p-5 overflow-x-auto">
-                            <table class="w-full text-left responsive-table">
-                                <thead>
-                                    <tr class="border-b">
-                                        <th class="py-2 px-2 font-semibold">Chapter</th>
-                                        ${columns.map(col => `<th class="w-12 text-center py-2 font-semibold">${col.label}</th>`).join('')}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
-
-                    for (const subtopic in syllabus[subject]) {
-                        syllabus[subject][subtopic].forEach((item, index) => {
-                            const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
-                            totalCheckboxes += columns.length;
-                            subjectHTML += `
-                                <tr>
-                                    <td class="py-3 px-2 text-gray-600 topic-cell">${item}</td>
-                                    ${columns.map(col => `
-                                        <td class="w-12 text-center" data-label="${col.label}">
-                                            <input type="checkbox" class="custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
-                                        </td>
-                                    `).join('')}
-                                </tr>
-                            `;
-                        });
-                    }
-
-                    subjectHTML += `</tbody></table></div>`;
-                    detailsElement.innerHTML = subjectHTML;
-                    container.appendChild(detailsElement);
-                }
+        const syllabus = {
+            "Computer Networks": {
+                "Topics": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCPStack /Protocol"]
+            },
+            "Operating Systems": {
+                "Topics": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"]
+            },
+            "C-Programming": {
+                "Topics": ["Data Types & Operators", "Control Flow Statements", "Functions & Storage Classes", "Arrays & Pointers", "Strings", "Structures & Union", "Miscellaneous"]
+            },
+            "Data Structures": {
+                "Topics": ["Introduction", "Arrays", "Linked List", "Stack & Queues", "Trees", "Graphs", "Hashing"]
+            },
+            "Digital Logic": {
+                "Topics": ["Logic Gates", "Minimization", "Combinational Circuit", "Sequential Circuit", "Number System"]
+            },
+            "Theory of Computation": {
+                "Topics": ["Finite Automata", "Push down Automata", "Turing Machine", "Decidability"]
+            },
+            "Compiler Design": {
+                "Topics": ["Lexical & Syntax Analysis", "Syntax Directed Translation", "Intermediate Code & Optimization"]
+            },
+            "Algorithms": {
+                "Topics": ["Analysis Of Algorithms", "Design Strategies", "Greedy Method", "Dynamic Programming", "Graph Algorithms", "Heap Algorithms", "Backtracking - Branch & Bound"]
+            },
+            "Database Management System": {
+                "Topics": ["FD's and Normalisation", "Transaction & Concurrency", "ER Model", "Query Language", "File Organisation & Indexing"]
+            },
+            "Computer Organisation & Architecture": {
+                "Topics": ["Introduction", "Machine Instruction & Addressing", "Floating Point Representation", "ALU and Control Unit", "Instruction And Pipelining", "Cache Memory", "Secondary Memory & IO"]
+            },
+            "Discrete Mathematics": {
+                "Topics": ["Graph Theory", "Mathematical Logic", "Set Theory", "Combinatorics"]
+            },
+            "Engineering Mathematics": {
+                "Topics": ["Linear Algebra", "Calculus", "Probability & Statistics"]
             }
+        };
+        
+        const columns = [
+            { label: 'Notes', id: 'notes' },
+            { label: 'R1', id: 'r1' },
+            { label: 'R2', id: 'r2' },
+            { label: 'R3', id: 'r3' },
+            { label: 'DPP', id: 'dpp' },
+            { label: 'PYQ', id: 'pyq1' },
+            { label: 'PYQ', id: 'pyq2' }
+        ];
+        
+        const subjectColors = [
+            'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)',
+            'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
+            'rgba(199, 199, 199, 0.6)', 'rgba(83, 102, 255, 0.6)', 'rgba(10, 207, 131, 0.6)',
+            'rgba(245, 69, 151, 0.6)', 'rgba(255, 99, 71, 0.6)', 'rgba(60, 179, 113, 0.6)'
+        ];
 
-            function initCharts() {
-                const fontColor = '#1f2937';
-                const gridColor = 'rgba(0, 0, 0, 0.1)';
+        const container = document.getElementById('syllabus-container');
+        const overallProgressBar = document.getElementById('overall-progress');
+        const overallProgressTextBg = document.getElementById('overall-progress-text-bg');
+        const overallProgressTextFg = document.getElementById('overall-progress-text-fg');
+        let totalCheckboxes = 0;
+        let checkboxStates = {};
+        let radarChart, barChart;
+        let unsubscribe;
+        let currentUser = null;
+        const subjectCompletionState = {};
 
-                const chartLabels = Object.keys(syllabus).map(s => {
-                    const abbreviations = {
-                        "Computer Networks": "CN",
-                        "Operating Systems": "OS",
-                        "Data Structures": "DS",
-                        "Digital Logic": "DSD",
-                        "Theory of Computation": "TOC",
-                        "Compiler Design": "CD",
-                        "Algorithms": "Algo",
-                        "Computer Organisation & Architecture": "COA",
-                        "Discrete Mathematics": "DM",
-                        "Engineering Mathematics": "EM",
-                        "Database Management System": "DBMS",
-                        "C-Programming": "C Prog"
-                    };
-                    return abbreviations[s] || s;
-                });
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+        const loginBtn = document.getElementById('login-btn');
+        const userProfileContainer = document.getElementById('user-profile');
+        const resetContainer = document.getElementById('reset-container');
 
-                const radarCtx = document.getElementById('radarChart').getContext('2d');
-                radarChart = new Chart(radarCtx, {
-                    type: 'radar',
-                    data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: 'rgba(79, 70, 229, 0.2)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(79, 70, 229, 1)' }] },
-                    options: { 
-                        responsive: true, maintainAspectRatio: false, 
-                        scales: { 
-                            r: { 
-                                beginAtZero: true, max: 100, 
-                                ticks: { stepSize: 20, backdropColor: 'transparent', color: fontColor },
-                                pointLabels: { color: fontColor, font: { size: 12, weight: '500' } },
-                                grid: { color: gridColor }
-                            } 
-                        }, 
-                        plugins: { legend: { display: false } } 
-                    }
-                });
-
-                const barCtx = document.getElementById('barChart').getContext('2d');
-                barChart = new Chart(barCtx, {
-                    type: 'bar',
-                    data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: subjectColors, borderColor: subjectColors.map(c => c.replace('0.6', '1')), borderWidth: 1 }] },
-                    options: { 
-                        responsive: true, maintainAspectRatio: false, indexAxis: 'y', 
-                        scales: { 
-                            x: { beginAtZero: true, max: 100, ticks: { color: fontColor }, grid: { color: gridColor } },
-                            y: { ticks: { color: fontColor, font: { weight: '500' } }, grid: { color: 'transparent' } }
-                        }, 
-                        plugins: { legend: { display: false } } 
-                    }
-                });
-            }
-
-            function updateDashboardMetrics(subjectPercentages, totalPercentage) {
-                document.getElementById('metric-total-completion').textContent = `${totalPercentage}%`;
-                const subjectsMastered = subjectPercentages.filter(p => p === 100).length;
-                document.getElementById('metric-subjects-mastered').textContent = `${subjectsMastered} / ${Object.keys(syllabus).length}`;
-                let revisionsDone = 0;
-                for (const id in checkboxStates) {
-                    if (checkboxStates[id] && (id.includes('-r1') || id.includes('-r2') || id.includes('-r3'))) {
-                        revisionsDone++;
-                    }
-                }
-                let completedTopicCount = 0;
-                for (const subject in syllabus) {
-                    for(const sub in syllabus[subject]){
-                        syllabus[subject][sub].forEach((item, index) => {
-                            const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
-                            const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
-                            let allChecked = true;
-                            columns.forEach(col => {
-                                if (!checkboxStates[`${itemId}-${col.id}`]) allChecked = false;
-                            });
-                            if (allChecked) completedTopicCount++;
-                        });
-                    }
-                }
-                document.getElementById('metric-topics-completed').textContent = `${completedTopicCount}`;
-                document.getElementById('metric-revisions-done').textContent = revisionsDone;
-            }
-
-            function updateCharts(subjectPercentages) {
-                radarChart.data.datasets[0].data = subjectPercentages;
-                barChart.data.datasets[0].data = subjectPercentages;
-                radarChart.update();
-                barChart.update();
-            }
-
-            function updateProgress() {
-                const subjectProgress = {};
-                const subjectTotals = {};
-                for (const subject in syllabus) {
-                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
-                    subjectProgress[subjectId] = 0;
-                    subjectTotals[subjectId] = 0;
-                    for (const subtopic in syllabus[subject]) {
-                        subjectTotals[subjectId] += syllabus[subject][subtopic].length * columns.length;
-                    }
-                }
-
-                let totalChecked = 0;
-                for (const id in checkboxStates) {
-                    if (checkboxStates[id]) {
-                        totalChecked++;
-                        const checkbox = document.getElementById(id);
-                        if(checkbox) {
-                            const subjectId = checkbox.dataset.subject;
-                            if (subjectId && subjectProgress.hasOwnProperty(subjectId)) subjectProgress[subjectId]++;
-                        }
-                    }
-                }
+        function generateSyllabusHTML() {
+             let delay = 0;
+            for (const subject in syllabus) {
+                const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                subjectCompletionState[subjectId] = false;
                 
-                const subjectPercentages = [];
-                for (const subjectId in subjectProgress) {
-                    const progressBar = document.getElementById(`progress-${subjectId}`);
-                    const progressTextBg = document.getElementById(`progress-text-bg-${subjectId}`);
-                    const progressTextFg = document.getElementById(`progress-text-fg-${subjectId}`);
-                    const icon = document.getElementById(`icon-${subjectId}`);
-                    
-                    if (progressBar && progressTextBg && progressTextFg) {
-                        const percentage = subjectTotals[subjectId] > 0 ? Math.round((subjectProgress[subjectId] / subjectTotals[subjectId]) * 100) : 0;
-                        subjectPercentages.push(percentage);
-                        progressBar.style.width = `${percentage}%`;
-                        progressTextBg.textContent = `${percentage}%`;
-                        progressTextFg.textContent = `${percentage}%`;
-                        icon.style.display = percentage === 100 ? 'inline-block' : 'none';
+                const detailsElement = document.createElement('details');
+                detailsElement.className = 'bg-white rounded-xl shadow-lg overflow-hidden';
+                detailsElement.style.animationDelay = `${delay}ms`;
+                delay += 50;
+                
+                let subjectHTML = `
+                    <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center bg-gray-50 border-b border-gray-200 gap-4">
+                        <div class="flex items-center space-x-2 self-start md:self-center">
+                            <span id="icon-${subjectId}" class="completion-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.705L7.7 11.292l2.299 2.295 5.294-5.294 1.414 1.414-6.706 6.706z"></path></svg>
+                            </span>
+                            <h2 class="text-xl font-semibold text-gray-800">${subject}</h2>
+                        </div>
+                        <div class="w-full md:w-auto flex items-center space-x-4">
+                            <div class="relative flex-grow h-5">
+                                <div class="absolute inset-0 bg-gray-200 rounded-full flex justify-center items-center">
+                                    <span id="progress-text-bg-${subjectId}" class="text-gray-700 text-xs font-semibold">0%</span>
+                                </div>
+                                <div id="progress-${subjectId}" class="absolute inset-0 progress-bar-fg rounded-full flex justify-center items-center overflow-hidden" style="width: 0%;">
+                                    <span id="progress-text-fg-${subjectId}" class="text-white text-xs font-semibold">0%</span>
+                                </div>
+                            </div>
+                            <span class="arrow text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </span>
+                        </div>
+                    </summary>
+                    <div class="p-2 md:p-5 overflow-x-auto">
+                        <table class="w-full text-left responsive-table">
+                            <thead>
+                                <tr class="border-b">
+                                    <th class="py-2 px-2 font-semibold">Chapter</th>
+                                    ${columns.map(col => `<th class="w-12 text-center py-2 font-semibold">${col.label}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
 
-                        if (percentage === 100 && !subjectCompletionState[subjectId]) {
-                            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                            subjectCompletionState[subjectId] = true;
-                        } else if (percentage < 100) {
-                            subjectCompletionState[subjectId] = false;
-                        }
-                    }
-                }
-
-                const overallPercentage = totalCheckboxes > 0 ? Math.round((totalChecked / totalCheckboxes) * 100) : 0;
-                overallProgressBar.style.width = `${overallPercentage}%`;
-                overallProgressTextBg.textContent = `${overallPercentage}%`;
-                overallProgressTextFg.textContent = `${overallPercentage}%`;
-
-                updateCharts(subjectPercentages);
-                updateDashboardMetrics(subjectPercentages, overallPercentage);
-            }
-
-            async function handleCheckboxChange(e) {
-                if (e.target.type === 'checkbox' && currentUser) {
-                    const id = e.target.id;
-                    checkboxStates[id] = e.target.checked;
-                    updateProgress(); // Optimistic update
-                    const userDocRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userDocRef, { progress: checkboxStates }, { merge: true });
-                }
-            }
-
-            async function resetAllProgress() {
-                if(currentUser) {
-                    checkboxStates = {};
-                    const userDocRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userDocRef, { progress: {} }); // Overwrite with empty object
-                }
-            }
-
-            function setupFirestoreListener(userId) {
-                if (unsubscribe) unsubscribe(); // Detach any old listener
-                const userDocRef = doc(db, "users", userId);
-                unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-                    if (docSnap.exists() && docSnap.data().progress) {
-                        checkboxStates = docSnap.data().progress;
-                    } else {
-                        checkboxStates = {};
-                    }
-                    // Load state into checkboxes
-                    document.querySelectorAll('.custom-checkbox').forEach(cb => {
-                        cb.checked = checkboxStates[cb.id] || false;
+                for (const subtopic in syllabus[subject]) {
+                    syllabus[subject][subtopic].forEach((item, index) => {
+                        const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
+                        totalCheckboxes += columns.length;
+                        subjectHTML += `
+                            <tr>
+                                <td class="py-3 px-2 text-gray-600 topic-cell">${item}</td>
+                                ${columns.map(col => `
+                                    <td class="w-12 text-center" data-label="${col.label}">
+                                        <input type="checkbox" class="custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
+                                    </td>
+                                `).join('')}
+                            </tr>
+                        `;
                     });
-                    updateProgress();
-                });
-            }
+                }
 
-            // --- Auth UI Logic ---
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    authContainer.classList.add('hidden');
-                    appContainer.classList.remove('hidden');
-                    resetContainer.classList.remove('hidden');
-                    userProfileContainer.innerHTML = `
-                        <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
-                        <span class="font-semibold hidden sm:inline">${user.displayName}</span>
-                        <button id="logout-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm">Sign Out</button>
-                    `;
-                    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-                    setupFirestoreListener(user.uid);
-                } else {
-                    currentUser = null;
-                    authContainer.classList.remove('hidden');
-                    appContainer.classList.add('hidden');
-                    resetContainer.classList.add('hidden');
-                    userProfileContainer.innerHTML = '';
-                    if (unsubscribe) unsubscribe();
-                    checkboxStates = {};
-                    updateProgress();
+                subjectHTML += `</tbody></table></div>`;
+                detailsElement.innerHTML = subjectHTML;
+                container.appendChild(detailsElement);
+            }
+        }
+
+        function initCharts() {
+            const fontColor = '#1f2937';
+            const gridColor = 'rgba(0, 0, 0, 0.1)';
+
+            const chartLabels = Object.keys(syllabus).map(s => {
+                const abbreviations = {
+                    "Computer Networks": "CN",
+                    "Operating Systems": "OS",
+                    "Data Structures": "DS",
+                    "Digital Logic": "DSD",
+                    "Theory of Computation": "TOC",
+                    "Compiler Design": "CD",
+                    "Algorithms": "Algo",
+                    "Computer Organisation & Architecture": "COA",
+                    "Discrete Mathematics": "DM",
+                    "Engineering Mathematics": "EM",
+                    "Database Management System": "DBMS",
+                    "C-Programming": "C Prog"
+                };
+                return abbreviations[s] || s;
+            });
+
+            const radarCtx = document.getElementById('radarChart').getContext('2d');
+            radarChart = new Chart(radarCtx, {
+                type: 'radar',
+                data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: 'rgba(79, 70, 229, 0.2)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(79, 70, 229, 1)' }] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    scales: { 
+                        r: { 
+                            beginAtZero: true, max: 100, 
+                            ticks: { stepSize: 20, backdropColor: 'transparent', color: fontColor },
+                            pointLabels: { color: fontColor, font: { size: 12, weight: '500' } },
+                            grid: { color: gridColor }
+                        } 
+                    }, 
+                    plugins: { legend: { display: false } } 
                 }
             });
 
-            loginBtn.addEventListener('click', () => {
-                signInWithRedirect(auth, provider);
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: subjectColors, borderColor: subjectColors.map(c => c.replace('0.6', '1')), borderWidth: 1 }] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, indexAxis: 'y', 
+                    scales: { 
+                        x: { beginAtZero: true, max: 100, ticks: { color: fontColor }, grid: { color: gridColor } },
+                        y: { ticks: { color: fontColor, font: { weight: '500' } }, grid: { color: 'transparent' } }
+                    }, 
+                    plugins: { legend: { display: false } } 
+                }
             });
+        }
 
-            // --- Modal Logic ---
-            const modal = document.getElementById('reset-modal');
-            const resetBtn = document.getElementById('reset-btn');
-            const cancelBtn = document.getElementById('cancel-reset');
-            const confirmBtn = document.getElementById('confirm-reset');
-            resetBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-            cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
-            confirmBtn.addEventListener('click', () => {
-                resetAllProgress();
-                modal.classList.add('hidden');
+        function updateDashboardMetrics(subjectPercentages, totalPercentage) {
+            document.getElementById('metric-total-completion').textContent = `${totalPercentage}%`;
+            const subjectsMastered = subjectPercentages.filter(p => p === 100).length;
+            document.getElementById('metric-subjects-mastered').textContent = `${subjectsMastered} / ${Object.keys(syllabus).length}`;
+            let revisionsDone = 0;
+            for (const id in checkboxStates) {
+                if (checkboxStates[id] && (id.includes('-r1') || id.includes('-r2') || id.includes('-r3'))) {
+                    revisionsDone++;
+                }
+            }
+            let completedTopicCount = 0;
+            for (const subject in syllabus) {
+                for(const sub in syllabus[subject]){
+                    syllabus[subject][sub].forEach((item, index) => {
+                        const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                        const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
+                        let allChecked = true;
+                        columns.forEach(col => {
+                            if (!checkboxStates[`${itemId}-${col.id}`]) allChecked = false;
+                        });
+                        if (allChecked) completedTopicCount++;
+                    });
+                }
+            }
+            document.getElementById('metric-topics-completed').textContent = `${completedTopicCount}`;
+            document.getElementById('metric-revisions-done').textContent = revisionsDone;
+        }
+
+        function updateCharts(subjectPercentages) {
+            radarChart.data.datasets[0].data = subjectPercentages;
+            barChart.data.datasets[0].data = subjectPercentages;
+            radarChart.update();
+            barChart.update();
+        }
+
+        function updateProgress() {
+            const subjectProgress = {};
+            const subjectTotals = {};
+            for (const subject in syllabus) {
+                const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                subjectProgress[subjectId] = 0;
+                subjectTotals[subjectId] = 0;
+                for (const subtopic in syllabus[subject]) {
+                    subjectTotals[subjectId] += syllabus[subject][subtopic].length * columns.length;
+                }
+            }
+
+            let totalChecked = 0;
+            for (const id in checkboxStates) {
+                if (checkboxStates[id]) {
+                    totalChecked++;
+                    const checkbox = document.getElementById(id);
+                    if(checkbox) {
+                        const subjectId = checkbox.dataset.subject;
+                        if (subjectId && subjectProgress.hasOwnProperty(subjectId)) subjectProgress[subjectId]++;
+                    }
+                }
+            }
+            
+            const subjectPercentages = [];
+            for (const subjectId in subjectProgress) {
+                const progressBar = document.getElementById(`progress-${subjectId}`);
+                const progressTextBg = document.getElementById(`progress-text-bg-${subjectId}`);
+                const progressTextFg = document.getElementById(`progress-text-fg-${subjectId}`);
+                const icon = document.getElementById(`icon-${subjectId}`);
+                
+                if (progressBar && progressTextBg && progressTextFg) {
+                    const percentage = subjectTotals[subjectId] > 0 ? Math.round((subjectProgress[subjectId] / subjectTotals[subjectId]) * 100) : 0;
+                    subjectPercentages.push(percentage);
+                    progressBar.style.width = `${percentage}%`;
+                    progressTextBg.textContent = `${percentage}%`;
+                    progressTextFg.textContent = `${percentage}%`;
+                    icon.style.display = percentage === 100 ? 'inline-block' : 'none';
+
+                    if (percentage === 100 && !subjectCompletionState[subjectId]) {
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                        subjectCompletionState[subjectId] = true;
+                    } else if (percentage < 100) {
+                        subjectCompletionState[subjectId] = false;
+                    }
+                }
+            }
+
+            const overallPercentage = totalCheckboxes > 0 ? Math.round((totalChecked / totalCheckboxes) * 100) : 0;
+            overallProgressBar.style.width = `${overallPercentage}%`;
+            overallProgressTextBg.textContent = `${overallPercentage}%`;
+            overallProgressTextFg.textContent = `${overallPercentage}%`;
+
+            updateCharts(subjectPercentages);
+            updateDashboardMetrics(subjectPercentages, overallPercentage);
+        }
+
+        async function handleCheckboxChange(e) {
+            if (e.target.type === 'checkbox' && currentUser) {
+                const id = e.target.id;
+                checkboxStates[id] = e.target.checked;
+                updateProgress(); // Optimistic update
+                const userDocRef = doc(db, "users", currentUser.uid);
+                await setDoc(userDocRef, { progress: checkboxStates }, { merge: true });
+            }
+        }
+
+        async function resetAllProgress() {
+            if(currentUser) {
+                checkboxStates = {};
+                const userDocRef = doc(db, "users", currentUser.uid);
+                await setDoc(userDocRef, { progress: {} }); // Overwrite with empty object
+            }
+        }
+
+        function setupFirestoreListener(userId) {
+            if (unsubscribe) unsubscribe(); // Detach any old listener
+            const userDocRef = doc(db, "users", userId);
+            unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                if (docSnap.exists() && docSnap.data().progress) {
+                    checkboxStates = docSnap.data().progress;
+                } else {
+                    checkboxStates = {};
+                }
+                // Load state into checkboxes
+                document.querySelectorAll('.custom-checkbox').forEach(cb => {
+                    cb.checked = checkboxStates[cb.id] || false;
+                });
+                updateProgress();
             });
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+        }
 
-            // --- Tab Logic ---
-            const syllabusTab = document.getElementById('tab-syllabus');
-            const dashboardTab = document.getElementById('tab-dashboard');
-            const syllabusContent = document.getElementById('syllabus-content');
-            const dashboardContent = document.getElementById('dashboard-content');
-
-            syllabusTab.addEventListener('click', () => {
-                syllabusTab.classList.add('active');
-                dashboardTab.classList.remove('active');
-                syllabusContent.classList.remove('hidden');
-                dashboardContent.classList.add('hidden');
-            });
-
-            dashboardTab.addEventListener('click', () => {
-                dashboardTab.classList.add('active');
-                syllabusTab.classList.remove('active');
-                dashboardContent.classList.remove('hidden');
-                syllabusContent.classList.add('hidden');
-            });
-
-            // --- Initial setup ---
-            generateSyllabusHTML();
-            initCharts();
-            container.addEventListener('change', handleCheckboxChange);
+        // --- Auth UI Logic ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                authContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                resetContainer.classList.remove('hidden');
+                userProfileContainer.innerHTML = `
+                    <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
+                    <span class="font-semibold hidden sm:inline">${user.displayName}</span>
+                    <button id="logout-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm">Sign Out</button>
+                `;
+                document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+                setupFirestoreListener(user.uid);
+            } else {
+                currentUser = null;
+                authContainer.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                resetContainer.classList.add('hidden');
+                userProfileContainer.innerHTML = '';
+                if (unsubscribe) unsubscribe();
+                checkboxStates = {};
+                updateProgress();
+            }
         });
+
+        loginBtn.addEventListener('click', () => {
+            signInWithRedirect(auth, provider);
+        });
+
+        // --- Modal Logic ---
+        const modal = document.getElementById('reset-modal');
+        const resetBtn = document.getElementById('reset-btn');
+        const cancelBtn = document.getElementById('cancel-reset');
+        const confirmBtn = document.getElementById('confirm-reset');
+        resetBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+        cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        confirmBtn.addEventListener('click', () => {
+            resetAllProgress();
+            modal.classList.add('hidden');
+        });
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+        // --- Tab Logic ---
+        const syllabusTab = document.getElementById('tab-syllabus');
+        const dashboardTab = document.getElementById('tab-dashboard');
+        const syllabusContent = document.getElementById('syllabus-content');
+        const dashboardContent = document.getElementById('dashboard-content');
+
+        syllabusTab.addEventListener('click', () => {
+            syllabusTab.classList.add('active');
+            dashboardTab.classList.remove('active');
+            syllabusContent.classList.remove('hidden');
+            dashboardContent.classList.add('hidden');
+        });
+
+        dashboardTab.addEventListener('click', () => {
+            dashboardTab.classList.add('active');
+            syllabusTab.classList.remove('active');
+            dashboardContent.classList.remove('hidden');
+            syllabusContent.classList.add('hidden');
+        });
+
+        // --- Initial setup ---
+        generateSyllabusHTML();
+        initCharts();
+        container.addEventListener('change', handleCheckboxChange);
+    });
     </script>
 </body>
 </html>
