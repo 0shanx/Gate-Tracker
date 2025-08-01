@@ -234,24 +234,24 @@
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithRedirect, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- FIREBASE CONFIG ---
-            const firebaseConfig = {
-                apiKey: "AIzaSyBUTgPzWbMEzzdWbdQUY806SAdUWvmUz8",
-                authDomain: "gate-tracker-a561f.firebaseapp.com",
-                projectId: "gate-tracker-a561f",
-                storageBucket: "gate-tracker-a561f.appspot.com",
-                messagingSenderId: "322542809047",
-                appId: "1:322542809047:web:86e719394ca02b6ef32592",
-                measurementId: "G-2MBR978R7G"
-            };
-            
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app);
-            const provider = new GoogleAuthProvider();
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUTgPzWbMEzzdWbdQUY806SAdUWvmUz8",
+            authDomain: "gate-tracker-a561f.firebaseapp.com",
+            projectId: "gate-tracker-a561f",
+            storageBucket: "gate-tracker-a561f.appspot.com",
+            messagingSenderId: "322542809047",
+            appId: "1:322542809047:web:86e719394ca02b6ef32592",
+            measurementId: "G-2MBR978R7G"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
+        document.addEventListener('DOMContentLoaded', () => {
             const syllabus = {
                 "Computer Networks": {
                     "Topics": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCPStack /Protocol"]
