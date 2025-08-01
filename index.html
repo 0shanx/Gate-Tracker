@@ -214,6 +214,7 @@
             <button id="reset-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow transition-transform transform hover:scale-105">
                 Reset All Progress
             </button>
+            <button id="logout-btn" class="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg">Sign Out</button>
         </div>
     </div>
 
@@ -235,14 +236,14 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
         // --- FIREBASE CONFIG ---
-       const firebaseConfig = {
-        apiKey: "AIzaSyBVUTqPzWbMEzzdWbdQUY806SadUWvmUz8",
-        authDomain: "gate-tracker-a561f.firebaseapp.com",
-        projectId: "gate-tracker-a561f",
-        storageBucket: "gate-tracker-a561f.firebasestorage.app",
-        messagingSenderId: "322542809047",
-        appId: "1:322542809047:web:86e719394ca02b6ef32592",
-        measurementId: "G-2MBR978R7G"
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUTgPzWbMEzzdWbdQUY806SadUWvmUz8",
+            authDomain: "gate-tracker-a561f.firebaseapp.com",
+            projectId: "gate-tracker-a561f",
+            storageBucket: "gate-tracker-a561f.appspot.com",
+            messagingSenderId: "322542809047",
+            appId: "1:322542809047:web:86e719394ca02b6ef32592",
+            measurementId: "G-2MBR978R7G"
         };
         
         // Initialize Firebase
@@ -584,7 +585,6 @@
                     userProfileContainer.innerHTML = `
                         <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
                         <span class="font-semibold hidden sm:inline">${user.displayName}</span>
-                        <button id="logout-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm">Sign Out</button>
                     `;
                     document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
                     setupFirestoreListener(user.uid);
