@@ -129,11 +129,22 @@
 </head>
 <body class="text-gray-800">
 
-    <div id="auth-container" class="flex items-center justify-center h-screen">
-        <div class="text-center p-8 bg-white rounded-xl shadow-2xl">
+    <!-- Auth Screen Overlay (With Splash Loader) -->
+    <div id="auth-screen" class="fixed inset-0 bg-[#f3f4f6] z-[9999] flex flex-col items-center justify-center transition-opacity duration-500 overflow-y-auto py-8">
+        
+        <!-- Splash Loader (Shows during Firebase check) -->
+        <div id="initial-loader" class="flex flex-col items-center justify-center animate-pulse">
+            <svg class="w-20 h-20 text-indigo-600 mb-4 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Loading...</h2>
+        </div>
+
+        <!-- Actual Login Card (Hidden initially) -->
+        <div id="auth-card" class="hidden text-center p-8 bg-white rounded-xl shadow-2xl max-w-md w-[90%] my-auto">
             <h1 class="text-3xl font-bold text-gray-900">GATE CSE Syllabus Tracker</h1>
             <p class="mt-2 text-gray-600">Please sign in to track your progress online.</p>
-            <button id="login-btn" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center space-x-2 transition-transform transform hover:scale-105">
+            <button id="login-btn" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-3 transition-transform transform hover:scale-105 shadow-md">
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,36.59,44,31.016,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
                 <span>Sign in with Google</span>
             </button>
@@ -147,7 +158,7 @@
                     <h1 class="text-3xl md:text-4xl font-bold text-gray-900 text-center sm:text-left">GATE CSE Preparation Tracker</h1>
                     <p class="mt-1 text-lg text-gray-600 text-center sm:text-left">Your dynamic and modern study companion.</p>
                 </div>
-                <div id="user-profile" class="flex items-center gap-4">
+                <div id="user-profile" class="flex items-center gap-4 bg-white p-2 pr-4 rounded-full shadow-sm border border-gray-200">
                     <!-- User info will be injected here -->
                 </div>
             </div>
@@ -218,7 +229,7 @@
             <button id="reset-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow transition-transform transform hover:scale-105">
                 Reset All Progress
             </button>
-            <button id="logout-btn" class="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg">Sign Out</button>
+            <button id="logout-btn" class="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg ml-2 transition-transform transform hover:scale-105">Sign Out</button>
         </div>
     </div>
 
@@ -324,7 +335,9 @@
             let currentUser = null;
             const subjectCompletionState = {};
 
-            const authContainer = document.getElementById('auth-container');
+            const authScreen = document.getElementById('auth-screen');
+            const initialLoader = document.getElementById('initial-loader');
+            const authCard = document.getElementById('auth-card');
             const appContainer = document.getElementById('app-container');
             const loginBtn = document.getElementById('login-btn');
             const userProfileContainer = document.getElementById('user-profile');
@@ -350,7 +363,7 @@
                                 <h2 class="text-xl font-semibold text-gray-800">${subject}</h2>
                             </div>
                             <div class="w-full md:w-auto flex items-center space-x-4">
-                                <div class="relative flex-grow h-5">
+                                <div class="relative flex-grow h-5 w-full md:w-48">
                                     <div class="absolute inset-0 bg-gray-200 rounded-full flex justify-center items-center">
                                         <span id="progress-text-bg-${subjectId}" class="text-gray-700 text-xs font-semibold">0%</span>
                                     </div>
@@ -583,18 +596,28 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     currentUser = user;
-                    authContainer.classList.add('hidden');
+                    
+                    // Smoothly hide the splash/auth screen
+                    authScreen.classList.add('opacity-0', 'pointer-events-none');
+                    setTimeout(() => authScreen.classList.add('hidden'), 500);
+                    
                     appContainer.classList.remove('hidden');
                     resetContainer.classList.remove('hidden');
                     userProfileContainer.innerHTML = `
-                        <img src="${user.photoURL}" alt="User" class="w-10 h-10 rounded-full">
-                        <span class="font-semibold">${user.displayName}</span>
+                        <img src="${user.photoURL}" alt="User" class="w-8 h-8 rounded-full border border-gray-300">
+                        <span class="font-semibold text-sm text-gray-800">${user.displayName}</span>
                     `;
                     document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
                     setupFirestoreListener(user.uid);
                 } else {
                     currentUser = null;
-                    authContainer.classList.remove('hidden');
+                    
+                    // Hide the loader, show the login card
+                    initialLoader.classList.add('hidden');
+                    authCard.classList.remove('hidden');
+                    authCard.classList.add('block'); // ensure it displays
+                    
+                    authScreen.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
                     appContainer.classList.add('hidden');
                     resetContainer.classList.add('hidden');
                     userProfileContainer.innerHTML = '';
@@ -605,12 +628,16 @@
             });
 
             loginBtn.addEventListener('click', async () => {
+              const originalContent = loginBtn.innerHTML;
+              loginBtn.innerHTML = '<span>Loading...</span>';
+              loginBtn.disabled = true;
               try {
                 await signInWithPopup(auth, provider);
-                // onAuthStateChanged will kick in and show your app
               } catch (err) {
                 console.error("Popup sign-in failed:", err);
                 alert("Sign-in error: " + err.message);
+                loginBtn.innerHTML = originalContent;
+                loginBtn.disabled = false;
               }
             });
 
@@ -654,5 +681,4 @@
         });
     </script>
 </body>
-
 </html>
