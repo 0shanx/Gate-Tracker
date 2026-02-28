@@ -456,6 +456,7 @@
         if (typeof __firebase_config !== 'undefined') {
             firebaseConfig = JSON.parse(__firebase_config);
         } else {
+            // FIXED: Removed "const" here so it applies to the outer variable!
             firebaseConfig = {
             apiKey: "AIzaSyABbY8p9qnKovAvt0WnLej5Q1MUeYfrnA0",
             authDomain: "gateprep-cbcca.firebaseapp.com",
@@ -464,15 +465,34 @@
             messagingSenderId: "470762223648",
             appId: "1:470762223648:web:7d4eba27574dab2d9be445",
             measurementId: "G-C3ML86FPJT"
+                };
             };
         }
         
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
         document.addEventListener('DOMContentLoaded', () => {
+            let app, db, auth, provider;
+
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                provider = new GoogleAuthProvider();
+            } catch (error) {
+                console.error("Firebase Init Error:", error);
+                const loader = document.getElementById('initial-loader');
+                if (loader) {
+                    loader.innerHTML = `
+                        <div class="text-rose-500 mb-4 animate-bounce text-6xl">⚠️</div>
+                        <h2 class="text-2xl font-display font-bold text-slate-800 mb-2">Connection Failed</h2>
+                        <p class="text-sm text-slate-500 max-w-xs text-center mb-4">Firebase could not initialize.</p>
+                        <div class="bg-rose-50 text-rose-700 text-xs p-3 rounded-xl border border-rose-100 max-w-xs break-words shadow-inner font-mono">
+                            ${error.message}
+                        </div>
+                    `;
+                }
+                return;
+            }
+
             const syllabus = {
                 "Computer Networks": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCP Stack"],
                 "Operating Systems": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"],
@@ -622,14 +642,16 @@
                         const itemId = `${subjectId}-${item.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${index}`;
                         totalCheckboxes += columns.length;
                         
+                        // FIXED: Changed xl:flex-row to md:flex-row for tablet support.
+                        // FIXED: Replaced flex-wrap with flex-nowrap and justify-between for single-row mobile design.
                         subjectHTML += `
-                            <div class="bg-white p-3 md:p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-3 md:gap-4 hover:border-brand-300 transition-colors">
-                                <span class="text-sm font-semibold text-slate-700 xl:w-1/3 leading-snug">${item}</span>
-                                <div class="flex flex-wrap gap-1.5 md:gap-2 xl:flex-nowrap shrink-0">
+                            <div class="bg-white p-3 md:p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-4 hover:border-brand-300 transition-colors">
+                                <span class="text-sm font-semibold text-slate-700 md:w-1/3 lg:w-1/2 leading-snug">${item}</span>
+                                <div class="flex flex-nowrap w-full md:w-auto justify-between md:justify-end gap-1 sm:gap-2 shrink-0 overflow-x-auto no-scrollbar pb-1 md:pb-0">
                                     ${columns.map(col => `
-                                        <label class="pill-checkbox cursor-pointer" title="${col.tooltip}">
+                                        <label class="pill-checkbox cursor-pointer flex-shrink-0" title="${col.tooltip}">
                                             <input type="checkbox" class="hidden custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
-                                            <div class="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-lg sm:rounded-xl flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 transition-all duration-200 hover:bg-slate-200 select-none">
+                                            <div class="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-lg sm:rounded-xl flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 transition-all duration-200 hover:bg-slate-200 select-none">
                                                 ${col.label}
                                             </div>
                                         </label>
