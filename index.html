@@ -5,15 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GATE CSE Preparation Tracker</title>
     
+    <!-- Modern Fonts: Outfit for Display, Inter for Body -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Chart.js & Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
+    <!-- Tailwind Config for Custom Colors/Fonts -->
     <script>
         tailwind.config = {
             theme: {
@@ -108,12 +112,15 @@
 </head>
 <body class="min-h-screen text-slate-800 antialiased selection:bg-brand-500 selection:text-white pb-20">
 
-    <div id="auth-screen" class="fixed inset-0 z- flex items-center justify-center transition-opacity duration-500 glass">
+    <!-- Auth / Splash Screen -->
+    <div id="auth-screen" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 glass">
+        <!-- Loader -->
         <div id="initial-loader" class="flex flex-col items-center justify-center">
             <div class="text-6xl md:text-7xl animate-bounce mb-6 drop-shadow-2xl">🏆</div>
             <h2 class="text-2xl font-display font-bold text-slate-800 tracking-tight animate-pulse">Syncing Tracker...</h2>
         </div>
 
+        <!-- Fallback Login Card -->
         <div id="auth-card" class="hidden w-full max-w-md p-8 m-4 bg-white rounded-3xl shadow-2xl border border-slate-100 text-center animate-slide-up">
             <div class="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 -rotate-6 shadow-inner border border-amber-100 transition-transform hover:rotate-0 duration-300">
                 <span class="text-5xl drop-shadow-md">🏆</span>
@@ -128,8 +135,10 @@
         </div>
     </div>
 
+    <!-- Main App Container -->
     <div id="app-container" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 hidden animate-fade-in relative z-10">
         
+        <!-- Top Navigation -->
         <header class="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 z-50">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30 text-white">
@@ -149,13 +158,16 @@
                 </div>
             </div>
 
+            <!-- Profile & Dropdown -->
             <div class="relative group">
                 <div id="user-profile-trigger" class="flex items-center gap-2 glass pl-2 pr-4 py-1.5 rounded-full cursor-pointer hover:bg-white/95 transition-colors shadow-sm">
+                    <!-- Javascript injects profile picture here -->
                     <div id="user-profile-img-container" class="flex items-center justify-center">
                         <div class="w-10 h-10 rounded-full bg-slate-200 animate-pulse"></div>
                     </div>
                 </div>
                 
+                <!-- Dropdown Menu -->
                 <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 opacity-0 pointer-events-none transition-all duration-200 transform origin-top-right scale-95 z-50 overflow-hidden">
                     <div class="p-3 border-b border-slate-100 bg-slate-50/50">
                         <p class="text-xs text-slate-500 font-medium mb-1">Signed in as</p>
@@ -181,11 +193,14 @@
             </div>
         </header>
 
+        <!-- Main Content Area (Glass Panel) -->
         <main class="glass rounded-3xl shadow-2xl overflow-hidden mb-12">
             
+            <!-- Sticky Header for Tabs and Overall Progress -->
             <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 p-6 md:px-8">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     
+                    <!-- Tabs -->
                     <div class="flex bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/50 w-full md:w-auto overflow-x-auto">
                         <button id="tab-syllabus" class="flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200">
                             Syllabus Flow
@@ -198,6 +213,7 @@
                         </button>
                     </div>
 
+                    <!-- Overall Progress -->
                     <div class="flex-1 max-w-md w-full">
                         <div class="flex justify-between items-end mb-2">
                             <span class="text-sm font-bold text-slate-700">Overall Completion</span>
@@ -212,9 +228,14 @@
             </div>
 
             <div class="p-6 md:p-8">
-                <div id="syllabus-content" class="space-y-6"></div>
+                <!-- Syllabus Section -->
+                <div id="syllabus-content" class="space-y-6">
+                    <!-- Javascript will inject accordions here -->
+                </div>
 
+                <!-- Dashboard Section -->
                 <div id="dashboard-content" class="hidden space-y-8">
+                    <!-- KPI Grid -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                             <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
@@ -249,6 +270,7 @@
                         </div>
                     </div>
 
+                    <!-- Charts Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
                             <h3 class="text-lg font-display font-bold text-slate-800 mb-6">Subject Strengths</h3>
@@ -268,6 +290,7 @@
                     </div>
                 </div>
 
+                <!-- Marks Distribution Section -->
                 <div id="marks-content" class="hidden space-y-6">
                     <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
                         <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -299,11 +322,14 @@
                                         <th class="pb-3 w-1/2">Proportion</th>
                                     </tr>
                                 </thead>
-                                <tbody id="marks-table-body"></tbody>
+                                <tbody id="marks-table-body">
+                                    <!-- Javascript will inject table rows here -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
 
+                    <!-- NEW: Deep Insights & Trend Analytics -->
                     <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm mt-6 animate-slide-up" style="animation-delay: 100ms;">
                         <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
@@ -311,13 +337,16 @@
                                 <p class="text-slate-500 text-sm mt-1">Analyze how the weightage of each subject has shifted over the last 11 exams.</p>
                             </div>
                             <div class="relative w-full md:w-64">
-                                <select id="trend-subject-select" class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 font-semibold py-2.5 px-4 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors cursor-pointer"></select>
+                                <select id="trend-subject-select" class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 font-semibold py-2.5 px-4 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors cursor-pointer">
+                                    <!-- Options injected via JS -->
+                                </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
                                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Insight Metric Cards -->
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
                                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Highest Marks</p>
@@ -343,7 +372,10 @@
         </main>
     </div>
 
-    <div id="reset-modal" class="fixed inset-0 z- bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+    <!-- Modals -->
+
+    <!-- 1. Reset Modal -->
+    <div id="reset-modal" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300" id="reset-modal-content">
             <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mb-6 mx-auto">
                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
@@ -357,7 +389,8 @@
         </div>
     </div>
 
-    <div id="guide-modal" class="fixed inset-0 z- bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+    <!-- 2. Guide Modal -->
+    <div id="guide-modal" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-xl w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto" id="guide-modal-content">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-3">
@@ -370,22 +403,46 @@
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
+            
             <div class="text-slate-600 space-y-4 text-sm md:text-base leading-relaxed">
-                <p>This tracker uses scientifically proven <strong>spaced repetition</strong> to help you master the GATE syllabus systematically.</p>
+                <p>This tracker uses scientifically proven <strong>spaced repetition</strong> to help you master the GATE syllabus systematically. Check off each block as you progress:</p>
+                
                 <ul class="space-y-4 mt-6">
-                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100"><span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-slate-600 flex items-center justify-center shadow-sm">N</span><div><strong class="text-slate-800">Notes & Concepts</strong></div></li>
-                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100"><span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R1</span><div><strong class="text-slate-800">First Revision</strong></div></li>
-                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100"><span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-purple-600 flex items-center justify-center shadow-sm">TT</span><div><strong class="text-slate-800">Topic Test</strong></div></li>
-                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100"><span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-orange-500 flex items-center justify-center shadow-sm">P1</span><div><strong class="text-slate-800">PYQ Iteration 1</strong></div></li>
-                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100"><span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R2</span><div><strong class="text-slate-800">Second Revision</strong></div></li>
-                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100"><span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-orange-500 flex items-center justify-center shadow-sm">P2</span><div><strong class="text-slate-800">PYQ Iteration 2</strong></div></li>
-                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100"><span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R3</span><div><strong class="text-slate-800">Final Sweep Revision</strong></div></li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-slate-600 flex items-center justify-center shadow-sm">N</span> 
+                        <div><strong class="text-slate-800">Notes & Concepts:</strong> Watch lectures, read standard textbooks, and prepare your comprehensive short notes.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R1</span> 
+                        <div><strong class="text-slate-800">First Revision:</strong> Revise your notes within 24 hours of completing the original topic.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-purple-600 flex items-center justify-center shadow-sm">TT</span> 
+                        <div><strong class="text-slate-800">Topic Test:</strong> Solve standard textbook exercises, coaching workbook questions, or topic-wise tests related to the topic.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-orange-500 flex items-center justify-center shadow-sm">P1</span> 
+                        <div><strong class="text-slate-800">PYQ Iteration 1:</strong> Solve Previous Year Questions (last 15-20 years). Mark the difficult questions.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R2</span> 
+                        <div><strong class="text-slate-800">Second Revision:</strong> Revisit notes and your marked difficult questions after 1-2 weeks.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-orange-500 flex items-center justify-center shadow-sm">P2</span> 
+                        <div><strong class="text-slate-800">PYQ Iteration 2:</strong> Re-solve the PYQs, strictly focusing on the ones you couldn't solve in P1.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R3</span> 
+                        <div><strong class="text-slate-800">Final Sweep Revision:</strong> Quick review after 1 month, or immediately prior to attempting subject-wise mock tests.</div>
+                    </li>
                 </ul>
             </div>
+            
             <button id="got-it-btn" class="mt-8 w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-sm text-lg">Let's Get Started</button>
         </div>
     </div>
-    
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -402,222 +459,269 @@
             measurementId: "G-2MBR978R7G"
         };
         
-        // Initialize Firebase immediately 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        const syllabus = {
-            "Computer Networks": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCP Stack"],
-            "Operating Systems": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"],
-            "C-Programming": ["Data Types & Operators", "Control Flow Statements", "Functions & Storage Classes", "Arrays & Pointers", "Strings", "Structures & Union", "Miscellaneous"],
-            "Data Structures": ["Introduction", "Arrays", "Linked List", "Stack & Queues", "Trees", "Graphs", "Hashing"],
-            "Digital Logic": ["Logic Gates", "Minimization", "Combinational Circuit", "Sequential Circuit", "Number System"],
-            "Theory of Computation": ["Finite Automata", "Push down Automata", "Turing Machine", "Decidability"],
-            "Compiler Design": ["Lexical & Syntax Analysis", "Syntax Directed Translation", "Intermediate Code & Optimization"],
-            "Algorithms": ["Analysis Of Algorithms", "Design Strategies", "Greedy Method", "Dynamic Programming", "Graph Algorithms", "Heap Algorithms", "Backtracking & Branch Bound"],
-            "DBMS": ["FD's and Normalisation", "Transaction & Concurrency", "ER Model", "Query Language", "File Organisation & Indexing"],
-            "Computer Architecture": ["Introduction", "Machine Instruction & Addressing", "Floating Point Representation", "ALU and Control Unit", "Instruction And Pipelining", "Cache Memory", "Secondary Memory & IO"],
-            "Discrete Mathematics": ["Graph Theory", "Mathematical Logic", "Set Theory", "Combinatorics"],
-            "Engineering Mathematics": ["Linear Algebra", "Calculus", "Probability & Statistics"],
-            "General Aptitude": ["Verbal Aptitude", "Quantitative Aptitude", "Analytical Aptitude", "Spatial Aptitude"]
-        };
-        
-        const subjectAbbreviations = {
-            "Computer Networks": "CN", "Operating Systems": "OS", "C-Programming": "C Prog", 
-            "Data Structures": "DS", "Digital Logic": "DL", "Theory of Computation": "TOC", 
-            "Compiler Design": "CD", "Algorithms": "Algo", "DBMS": "DBMS", 
-            "Computer Architecture": "COA", "Discrete Mathematics": "DM", 
-            "Engineering Mathematics": "EM", "General Aptitude": "GA"
-        };
-        
-        const subjectWeightages = {
-            "Computer Networks": 7.9, "Operating Systems": 8.7, "C-Programming": 4.4, "Data Structures": 4.5,
-            "Digital Logic": 6.2, "Theory of Computation": 7.7, "Compiler Design": 5.6, "Algorithms": 9.2,
-            "DBMS": 7.2, "Computer Architecture": 7.0, "Discrete Mathematics": 9.2, "Engineering Mathematics": 7.4,
-            "General Aptitude": 15.0
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+            const syllabus = {
+                "Computer Networks": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCP Stack"],
+                "Operating Systems": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"],
+                "C-Programming": ["Data Types & Operators", "Control Flow Statements", "Functions & Storage Classes", "Arrays & Pointers", "Strings", "Structures & Union", "Miscellaneous"],
+                "Data Structures": ["Introduction", "Arrays", "Linked List", "Stack & Queues", "Trees", "Graphs", "Hashing"],
+                "Digital Logic": ["Logic Gates", "Minimization", "Combinational Circuit", "Sequential Circuit", "Number System"],
+                "Theory of Computation": ["Finite Automata", "Push down Automata", "Turing Machine", "Decidability"],
+                "Compiler Design": ["Lexical & Syntax Analysis", "Syntax Directed Translation", "Intermediate Code & Optimization"],
+                "Algorithms": ["Analysis Of Algorithms", "Design Strategies", "Greedy Method", "Dynamic Programming", "Graph Algorithms", "Heap Algorithms", "Backtracking & Branch Bound"],
+                "DBMS": ["FD's and Normalisation", "Transaction & Concurrency", "ER Model", "Query Language", "File Organisation & Indexing"],
+                "Computer Architecture": ["Introduction", "Machine Instruction & Addressing", "Floating Point Representation", "ALU and Control Unit", "Instruction And Pipelining", "Cache Memory", "Secondary Memory & IO"],
+                "Discrete Mathematics": ["Graph Theory", "Mathematical Logic", "Set Theory", "Combinatorics"],
+                "Engineering Mathematics": ["Linear Algebra", "Calculus", "Probability & Statistics"],
+                "General Aptitude": ["Verbal Aptitude", "Quantitative Aptitude", "Analytical Aptitude", "Spatial Aptitude"]
+            };
+            
+            // Short forms mapping for Charts
+            const subjectAbbreviations = {
+                "Computer Networks": "CN",
+                "Operating Systems": "OS",
+                "C-Programming": "C Prog",
+                "Data Structures": "DS",
+                "Digital Logic": "DL",
+                "Theory of Computation": "TOC",
+                "Compiler Design": "CD",
+                "Algorithms": "Algo",
+                "DBMS": "DBMS",
+                "Computer Architecture": "COA",
+                "Discrete Mathematics": "DM",
+                "Engineering Mathematics": "EM",
+                "General Aptitude": "GA"
+            };
+            
+            // --- NEW: Precision Weightages based on GATE Overflow Data (2010-2025) ---
+            // Averages derived from 25 papers and normalized strictly to 85 Technical Marks
+            const subjectWeightages = {
+                "Computer Networks": 7.9,
+                "Operating Systems": 8.7,
+                "C-Programming": 4.4,
+                "Data Structures": 4.5,
+                "Digital Logic": 6.2,
+                "Theory of Computation": 7.7,
+                "Compiler Design": 5.6,
+                "Algorithms": 9.2,
+                "DBMS": 7.2,
+                "Computer Architecture": 7.0,
+                "Discrete Mathematics": 9.2,
+                "Engineering Mathematics": 7.4,
+                "General Aptitude": 15.0
+            };
 
-        const subjectMedians = {
-            "Computer Networks": 8.0, "Operating Systems": 9.0, "C-Programming": 4.0, "Data Structures": 5.0,
-            "Digital Logic": 6.0, "Theory of Computation": 8.0, "Compiler Design": 6.0, "Algorithms": 9.0,
-            "DBMS": 8.0, "Computer Architecture": 7.0, "Discrete Mathematics": 9.0, "Engineering Mathematics": 6.0,
-            "General Aptitude": 15.0
-        };
-        
-        const trendLabels = ['2018', '2019', '2020', '2021-1', '2021-2', '2022', '2023', '2024-1', '2024-2', '2025-1', '2025-2'];
-        const trendData = {
-            "Computer Networks":, "Operating Systems":,
-            "C-Programming":, "Data Structures":,
-            "Digital Logic":, "Theory of Computation":,
-            "Compiler Design":, "Algorithms":,
-            "DBMS":, "Computer Architecture":,
-            "Discrete Mathematics":, "Engineering Mathematics":,
-            "General Aptitude":
-        };
+            // Median values derived from the same historical dataset
+            const subjectMedians = {
+                "Computer Networks": 8.0,
+                "Operating Systems": 9.0,
+                "C-Programming": 4.0,
+                "Data Structures": 5.0,
+                "Digital Logic": 6.0,
+                "Theory of Computation": 8.0,
+                "Compiler Design": 6.0,
+                "Algorithms": 9.0,
+                "DBMS": 8.0,
+                "Computer Architecture": 7.0,
+                "Discrete Mathematics": 9.0,
+                "Engineering Mathematics": 6.0,
+                "General Aptitude": 15.0
+            };
+            
+            // --- NEW: Historical Exam-by-Exam Trend Data (Last 11 Exams: 2018 to 2025-2) ---
+            const trendLabels = ['2018', '2019', '2020', '2021-1', '2021-2', '2022', '2023', '2024-1', '2024-2', '2025-1', '2025-2'];
+            const trendData = {
+                "Computer Networks": [7, 9, 6, 9, 7, 10, 8, 9, 9, 8, 6],
+                "Operating Systems": [9, 10, 10, 6, 8, 10, 9, 10, 10, 8, 7],
+                "C-Programming": [8, 8, 3, 4, 6, 5, 1, 4, 4, 5, 6],
+                "Data Structures": [2, 4, 7, 6, 2, 4, 8, 2, 4, 5, 6],
+                "Digital Logic": [6, 8, 6, 6, 7, 5, 6, 6, 6, 6, 9],
+                "Theory of Computation": [8, 8, 9, 8, 11, 8, 9, 5, 7, 10, 7],
+                "Compiler Design": [5, 6, 4, 7, 6, 4, 7, 10, 8, 6, 6],
+                "Algorithms": [8, 6, 8, 9, 10, 6, 6, 9, 6, 8, 8],
+                "DBMS": [6, 8, 8, 8, 7, 7, 5, 8, 8, 8, 9],
+                "Computer Architecture": [8, 4, 9, 5, 6, 7, 10, 8, 8, 8, 9],
+                "Discrete Mathematics": [11, 8, 8, 9, 6, 13, 10, 6, 9, 6, 3],
+                "Engineering Mathematics": [7, 8, 5, 8, 9, 6, 6, 8, 6, 7, 9],
+                "General Aptitude": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
+            };
 
-        let currentMarksMetric = 'average';
-        let trendLineChart;
-        
-        const columns = [
-            { label: 'N', tooltip: 'Notes', id: 'notes' }, { label: 'R1', tooltip: 'Revision 1', id: 'r1' },
-            { label: 'R2', tooltip: 'Revision 2', id: 'r2' }, { label: 'R3', tooltip: 'Revision 3', id: 'r3' },
-            { label: 'TT', tooltip: 'Topic Test', id: 'tt' }, { label: 'P1', tooltip: 'PYQ Set 1', id: 'pyq1' },
-            { label: 'P2', tooltip: 'PYQ Set 2', id: 'pyq2' }
-        ];
-        
-        const container = document.getElementById('syllabus-content');
-        let totalCheckboxes = 0;
-        let checkboxStates = {};
-        let radarChart, barChart;
-        let unsubscribe;
-        let currentUser = null;
-        const subjectCompletionState = {};
-        const LOCAL_STORAGE_KEY = 'gateTrackerState_offline';
+            let currentMarksMetric = 'average';
+            let trendLineChart;
+            
+            const columns = [
+                { label: 'N', tooltip: 'Notes', id: 'notes' },
+                { label: 'R1', tooltip: 'Revision 1', id: 'r1' },
+                { label: 'R2', tooltip: 'Revision 2', id: 'r2' },
+                { label: 'R3', tooltip: 'Revision 3', id: 'r3' },
+                { label: 'TT', tooltip: 'Topic Test', id: 'tt' },
+                { label: 'P1', tooltip: 'PYQ Set 1', id: 'pyq1' },
+                { label: 'P2', tooltip: 'PYQ Set 2', id: 'pyq2' }
+            ];
+            
+            const container = document.getElementById('syllabus-content');
+            let totalCheckboxes = 0;
+            let checkboxStates = {};
+            let radarChart, barChart;
+            let unsubscribe;
+            let currentUser = null;
+            const subjectCompletionState = {};
+            const LOCAL_STORAGE_KEY = 'gateTrackerState_offline';
 
-        const getUserDocRef = (uid) => doc(db, 'users', uid, 'progress', 'state');
-
-        function generateSyllabusHTML() {
-             let delay = 0;
-            for (const subject in syllabus) {
-                const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
-                subjectCompletionState[subjectId] = false;
-                
-                const detailsElement = document.createElement('details');
-                detailsElement.className = 'group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden';
-                detailsElement.style.animationDelay = `${delay}ms`;
-                delay += 50;
-                
-                let subjectHTML = `
-                    <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center gap-4 select-none relative z-10 bg-white">
-                        <div class="flex items-center space-x-4 w-full md:w-auto">
-                            <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 transition-colors group-hover:bg-brand-100 shrink-0">
-                                <svg id="icon-${subjectId}" class="w-5 h-5 opacity-0 scale-50 transition-all duration-300 absolute text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                <svg class="w-5 h-5 folder-icon transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            // Generate Modern UI
+            function generateSyllabusHTML() {
+                 let delay = 0;
+                for (const subject in syllabus) {
+                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                    subjectCompletionState[subjectId] = false;
+                    
+                    const detailsElement = document.createElement('details');
+                    detailsElement.className = 'group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden';
+                    detailsElement.style.animationDelay = `${delay}ms`;
+                    delay += 50;
+                    
+                    let subjectHTML = `
+                        <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center gap-4 select-none relative z-10 bg-white">
+                            <div class="flex items-center space-x-4 w-full md:w-auto">
+                                <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 transition-colors group-hover:bg-brand-100 shrink-0">
+                                    <svg id="icon-${subjectId}" class="w-5 h-5 opacity-0 scale-50 transition-all duration-300 absolute text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <svg class="w-5 h-5 folder-icon transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                                </div>
+                                <h2 class="text-lg font-display font-bold text-slate-800 flex-1">${subject}</h2>
                             </div>
-                            <h2 class="text-lg font-display font-bold text-slate-800 flex-1">${subject}</h2>
-                        </div>
+                            
+                            <div class="w-full md:w-[300px] flex items-center space-x-4">
+                                <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
+                                    <div id="progress-${subjectId}" class="h-full bg-brand-500 progress-bar-fill rounded-full" style="width: 0%;"></div>
+                                </div>
+                                <span id="progress-text-${subjectId}" class="text-sm font-bold text-slate-600 w-10 text-right">0%</span>
+                                <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-slate-400 arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+                        </summary>
                         
-                        <div class="w-full md:w-[300px] flex items-center space-x-4">
-                            <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
-                                <div id="progress-${subjectId}" class="h-full bg-brand-500 progress-bar-fill rounded-full" style="width: 0%;"></div>
-                            </div>
-                            <span id="progress-text-${subjectId}" class="text-sm font-bold text-slate-600 w-10 text-right">0%</span>
-                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4 text-slate-400 arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                            </div>
-                        </div>
-                    </summary>
-                    
-                    <div class="details-content bg-slate-50/50">
-                        <div class="details-inner p-2 md:p-5 border-t border-slate-100">
-                            <div class="space-y-2">
-                `;
+                        <div class="details-content bg-slate-50/50">
+                            <div class="details-inner p-2 md:p-5 border-t border-slate-100">
+                                <div class="space-y-2">
+                    `;
 
-                syllabus[subject].forEach((item, index) => {
-                    const itemId = `${subjectId}-${item.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${index}`;
-                    totalCheckboxes += columns.length;
-                    
-                    subjectHTML += `
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-brand-300 transition-colors">
-                            <span class="text-sm font-semibold text-slate-700 md:w-1/3 leading-snug">${item}</span>
-                            <div class="flex flex-wrap md:flex-nowrap gap-2 md:gap-3 shrink-0">
-                                ${columns.map(col => `
-                                    <label class="pill-checkbox cursor-pointer" title="${col.tooltip}">
-                                        <input type="checkbox" class="hidden custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
-                                        <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 transition-all duration-200 hover:bg-slate-200 select-none">
-                                            ${col.label}
-                                        </div>
-                                    </label>
-                                `).join('')}
+                    syllabus[subject].forEach((item, index) => {
+                        const itemId = `${subjectId}-${item.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${index}`;
+                        totalCheckboxes += columns.length;
+                        
+                        subjectHTML += `
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-brand-300 transition-colors">
+                                <span class="text-sm font-semibold text-slate-700 md:w-1/3 leading-snug">${item}</span>
+                                <div class="flex flex-wrap md:flex-nowrap gap-2 md:gap-3 shrink-0">
+                                    ${columns.map(col => `
+                                        <label class="pill-checkbox cursor-pointer" title="${col.tooltip}">
+                                            <input type="checkbox" class="hidden custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
+                                            <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 transition-all duration-200 hover:bg-slate-200 select-none">
+                                                ${col.label}
+                                            </div>
+                                        </label>
+                                    `).join('')}
+                                </div>
                             </div>
-                        </div>
+                        `;
+                    });
+
+                    subjectHTML += `</div></div></div>`;
+                    detailsElement.innerHTML = subjectHTML;
+                    container.appendChild(detailsElement);
+                }
+            }
+
+            // Generate Marks Distribution Table
+            function generateMarksTable() {
+                const tbody = document.getElementById('marks-table-body');
+                const sourceData = currentMarksMetric === 'average' ? subjectWeightages : subjectMedians;
+                
+                // Sort subjects by weightage in descending order, excluding General Aptitude
+                const sortedSubjects = Object.entries(sourceData)
+                    .filter(([subject]) => subject !== "General Aptitude")
+                    .sort((a, b) => b[1] - a[1]);
+
+                let html = '';
+                // Dynamically set maxWeight to the highest core subject to scale bars effectively
+                const maxWeight = Math.max(...sortedSubjects.map(s => s[1])); 
+                // Fix: brand-400 didn't exist in config, using brand-500 and brand-600 instead
+                const barColorClass = currentMarksMetric === 'average' ? 'from-brand-500 to-brand-600' : 'from-purple-400 to-purple-500';
+
+                sortedSubjects.forEach(([subject, weight]) => {
+                    const widthPercent = (weight / maxWeight) * 100;
+                    html += `
+                        <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors group">
+                            <td class="py-4 pl-2 font-medium text-slate-700 group-hover:text-brand-600 transition-colors">${subject}</td>
+                            <td class="py-4 text-right pr-4 font-bold text-slate-800">${weight.toFixed(1)}</td>
+                            <td class="py-4 w-1/2 pr-2">
+                                <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                                    <div class="h-full bg-gradient-to-r ${barColorClass} rounded-full shadow-sm transition-all duration-500 ease-out" style="width: ${widthPercent}%"></div>
+                                </div>
+                            </td>
+                        </tr>
                     `;
                 });
-
-                subjectHTML += `</div></div></div>`;
-                detailsElement.innerHTML = subjectHTML;
-                container.appendChild(detailsElement);
+                tbody.innerHTML = html;
             }
-        }
 
-        function generateMarksTable() {
-            const tbody = document.getElementById('marks-table-body');
-            const sourceData = currentMarksMetric === 'average' ? subjectWeightages : subjectMedians;
-            
-            const sortedSubjects = Object.entries(sourceData)
-                .filter(([subject]) => subject !== "General Aptitude")
-                .sort((a, b) => b - a);
+            // Initialize Trend Dropdown and Insights
+            function initTrendAnalytics() {
+                const select = document.getElementById('trend-subject-select');
+                let optionsHtml = '';
+                Object.keys(subjectAbbreviations).forEach(subj => {
+                    if (subj !== "General Aptitude") {
+                        optionsHtml += `<option value="${subj}">${subj}</option>`;
+                    }
+                });
+                select.innerHTML = optionsHtml;
 
-            let html = '';
-            const maxWeight = Math.max(...sortedSubjects.map(s => s)); 
-            const barColorClass = currentMarksMetric === 'average' ? 'from-brand-500 to-brand-600' : 'from-purple-400 to-purple-500';
+                // Default selection
+                select.value = "Algorithms";
+                updateTrendChart("Algorithms");
 
-            sortedSubjects.forEach(([subject, weight]) => {
-                const widthPercent = (weight / maxWeight) * 100;
-                html += `
-                    <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors group">
-                        <td class="py-4 pl-2 font-medium text-slate-700 group-hover:text-brand-600 transition-colors">${subject}</td>
-                        <td class="py-4 text-right pr-4 font-bold text-slate-800">${weight.toFixed(1)}</td>
-                        <td class="py-4 w-1/2 pr-2">
-                            <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
-                                <div class="h-full bg-gradient-to-r ${barColorClass} rounded-full shadow-sm transition-all duration-500 ease-out" style="width: ${widthPercent}%"></div>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
+                select.addEventListener('change', (e) => {
+                    updateTrendChart(e.target.value);
+                });
+            }
 
-        function initTrendAnalytics() {
-            const select = document.getElementById('trend-subject-select');
-            let optionsHtml = '';
-            Object.keys(subjectAbbreviations).forEach(subj => {
-                if (subj !== "General Aptitude") {
-                    optionsHtml += `<option value="${subj}">${subj}</option>`;
+            function updateTrendChart(subject) {
+                const data = trendData[subject];
+                
+                // Calculate Insights
+                const max = Math.max(...data);
+                const min = Math.min(...data);
+                const diff = max - min;
+                
+                let volatilityText = "Stable";
+                if (diff === 0) volatilityText = "Constant";
+                else if (diff <= 2) volatilityText = "Low";
+                else if (diff <= 5) volatilityText = "Moderate";
+                else volatilityText = "High / Unpredictable";
+
+                document.getElementById('insight-max').textContent = max;
+                document.getElementById('insight-min').textContent = min;
+                document.getElementById('insight-volatility').textContent = volatilityText;
+
+                // Update Chart
+                if (trendLineChart) {
+                    trendLineChart.data.datasets[0].data = data;
+                    trendLineChart.data.datasets[0].label = `${subject} Marks Trend`;
+                    trendLineChart.update();
                 }
-            });
-            select.innerHTML = optionsHtml;
-            select.value = "Algorithms";
-            updateTrendChart("Algorithms");
-
-            select.addEventListener('change', (e) => {
-                updateTrendChart(e.target.value);
-            });
-        }
-
-        function updateTrendChart(subject) {
-            const data = trendData[subject];
-            
-            const max = Math.max(...data);
-            const min = Math.min(...data);
-            const diff = max - min;
-            
-            let volatilityText = "Stable";
-            if (diff === 0) volatilityText = "Constant";
-            else if (diff <= 2) volatilityText = "Low";
-            else if (diff <= 5) volatilityText = "Moderate";
-            else volatilityText = "High / Unpredictable";
-
-            document.getElementById('insight-max').textContent = max;
-            document.getElementById('insight-min').textContent = min;
-            document.getElementById('insight-volatility').textContent = volatilityText;
-
-            if (trendLineChart) {
-                trendLineChart.data.datasets.data = data;
-                trendLineChart.data.datasets.label = `${subject} Marks Trend`;
-                trendLineChart.update();
             }
-        }
 
-        function initCharts() {
-            try {
-                if (typeof Chart === 'undefined') return;
-
+            function initCharts() {
+                // Use the Abbreviations map created earlier
                 const chartLabels = Object.keys(syllabus).map(s => subjectAbbreviations[s] || s);
-                const brandColor = 'rgba(99, 102, 241, 1)'; 
+                const brandColor = 'rgba(99, 102, 241, 1)'; // brand-500
                 const brandBg = 'rgba(99, 102, 241, 0.2)';
 
                 Chart.defaults.font.family = "'Inter', sans-serif";
@@ -666,9 +770,12 @@
                     }
                 });
                 
+                // NEW: Trend Line Chart
                 const trendCtx = document.getElementById('trendLineChart').getContext('2d');
+                
+                // Create gradient for the line chart fill
                 const gradientFill = trendCtx.createLinearGradient(0, 0, 0, 300);
-                gradientFill.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); 
+                gradientFill.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); // brand-500 transparent
                 gradientFill.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
 
                 trendLineChart = new Chart(trendCtx, {
@@ -677,7 +784,7 @@
                         labels: trendLabels,
                         datasets: [{
                             label: 'Marks Trend',
-                            data: [],
+                            data: [], // Injected via updateTrendChart
                             borderColor: 'rgba(99, 102, 241, 1)',
                             backgroundColor: gradientFill,
                             borderWidth: 3,
@@ -687,7 +794,7 @@
                             pointRadius: 4,
                             pointHoverRadius: 6,
                             fill: true,
-                            tension: 0.4 
+                            tension: 0.4 // Smooth curves
                         }]
                     },
                     options: {
@@ -716,404 +823,456 @@
                         }
                     }
                 });
-            } catch(e) {
-                console.warn('Charts failed to load properly:', e);
-            }
-        }
-
-        function updateMetricsAndCharts() {
-            const subjectProgress = {};
-            const subjectTotals = {};
-            const subjectPhaseProgress = {}; 
-            
-            for (const subject in syllabus) {
-                const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
-                subjectProgress[subjectId] = 0;
-                subjectTotals[subjectId] = syllabus[subject].length * columns.length;
-                subjectPhaseProgress[subjectId] = { notes: 0, practice: 0, revision: 0 };
             }
 
-            let totalChecked = 0;
-            let revisionsDone = 0;
-            let completedTopicCount = 0;
-
-            const allCheckboxes = document.querySelectorAll('.custom-checkbox');
-            const topicCompletionMap = {};
-
-            allCheckboxes.forEach(cb => {
-                const isChecked = checkboxStates[cb.id] || false;
-                cb.checked = isChecked; 
+            function updateMetricsAndCharts() {
+                const subjectProgress = {};
+                const subjectTotals = {};
+                const subjectPhaseProgress = {}; // NEW
                 
-                if (isChecked) {
-                    totalChecked++;
-                    const subjectId = cb.dataset.subject;
-                    if (subjectId) {
-                        subjectProgress[subjectId]++;
-                        
-                        if (cb.id.includes('-notes')) {
-                            subjectPhaseProgress[subjectId].notes++;
-                        } else if (cb.id.includes('-tt') || cb.id.includes('-pyq1') || cb.id.includes('-pyq2')) {
-                            subjectPhaseProgress[subjectId].practice++;
-                        } else if (cb.id.includes('-r1') || cb.id.includes('-r2') || cb.id.includes('-r3')) {
-                            subjectPhaseProgress[subjectId].revision++;
-                            revisionsDone++;
-                        }
-                    }
+                for (const subject in syllabus) {
+                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                    subjectProgress[subjectId] = 0;
+                    subjectTotals[subjectId] = syllabus[subject].length * columns.length;
+                    subjectPhaseProgress[subjectId] = { notes: 0, practice: 0, revision: 0 };
                 }
 
-                const topicBaseId = cb.id.substring(0, cb.id.lastIndexOf('-'));
-                if (!topicCompletionMap[topicBaseId]) topicCompletionMap[topicBaseId] = { total: 0, checked: 0 };
-                topicCompletionMap[topicBaseId].total++;
-                if (isChecked) topicCompletionMap[topicBaseId].checked++;
-            });
+                let totalChecked = 0;
+                let revisionsDone = 0;
+                let completedTopicCount = 0;
 
-            Object.values(topicCompletionMap).forEach(topic => {
-                if (topic.checked === topic.total) completedTopicCount++;
-            });
+                // Process DOM Checkboxes for State calculation
+                const allCheckboxes = document.querySelectorAll('.custom-checkbox');
+                const topicCompletionMap = {};
 
-            const subjectPercentages = [];
-            let subjectsMastered = 0;
-            let totalProjectedScore = 0;
-            
-            const notesData = [];
-            const practiceData = [];
-            const revisionData = [];
-
-            for (const subject in syllabus) {
-                const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
-                const percentage = subjectTotals[subjectId] > 0 ? Math.round((subjectProgress[subjectId] / subjectTotals[subjectId]) * 100) : 0;
-                subjectPercentages.push(percentage);
-                
-                const weight = subjectWeightages[subject] || 0;
-                totalProjectedScore += (percentage / 100) * weight;
-                
-                const totalTopics = syllabus[subject].length;
-                const nVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].notes / totalTopics) * 14.28) : 0;
-                const pVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].practice / (totalTopics * 3)) * 42.86) : 0;
-                const rVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].revision / (totalTopics * 3)) * 42.86) : 0;
-                
-                notesData.push(nVal);
-                practiceData.push(pVal);
-                revisionData.push(rVal);
-                
-                const progressBar = document.getElementById(`progress-${subjectId}`);
-                const progressText = document.getElementById(`progress-text-${subjectId}`);
-                const icon = document.getElementById(`icon-${subjectId}`);
-                const folderIcon = document.querySelector(`#icon-${subjectId} + .folder-icon`);
-                
-                if (progressBar && progressText) {
-                    progressBar.style.width = `${percentage}%`;
-                    progressText.textContent = `${percentage}%`;
+                allCheckboxes.forEach(cb => {
+                    const isChecked = checkboxStates[cb.id] || false;
+                    cb.checked = isChecked; // sync DOM
                     
-                    if (percentage === 100) {
-                        if (!subjectCompletionState[subjectId]) subjectsMastered++;
-                        icon.classList.remove('opacity-0', 'scale-50');
-                        icon.classList.add('opacity-100', 'scale-100');
-                        folderIcon.classList.add('opacity-0', 'scale-50', 'absolute');
-                        
-                        if (!subjectCompletionState[subjectId]) {
-                            try {
-                                if (typeof confetti !== 'undefined') {
-                                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#6366f1', '#a855f7', '#3b82f6'] });
-                                }
-                            } catch(e) {}
-                            subjectCompletionState[subjectId] = true;
+                    if (isChecked) {
+                        totalChecked++;
+                        const subjectId = cb.dataset.subject;
+                        if (subjectId) {
+                            subjectProgress[subjectId]++;
+                            
+                            // Phase Progress Tracking
+                            if (cb.id.includes('-notes')) {
+                                subjectPhaseProgress[subjectId].notes++;
+                            } else if (cb.id.includes('-tt') || cb.id.includes('-pyq1') || cb.id.includes('-pyq2')) {
+                                subjectPhaseProgress[subjectId].practice++;
+                            } else if (cb.id.includes('-r1') || cb.id.includes('-r2') || cb.id.includes('-r3')) {
+                                subjectPhaseProgress[subjectId].revision++;
+                                revisionsDone++;
+                            }
                         }
-                    } else {
-                        icon.classList.add('opacity-0', 'scale-50');
-                        icon.classList.remove('opacity-100', 'scale-100');
-                        folderIcon.classList.remove('opacity-0', 'scale-50', 'absolute');
-                        subjectCompletionState[subjectId] = false;
+                    }
+
+                    // Calculate full topic completion
+                    const topicBaseId = cb.id.substring(0, cb.id.lastIndexOf('-'));
+                    if (!topicCompletionMap[topicBaseId]) topicCompletionMap[topicBaseId] = { total: 0, checked: 0 };
+                    topicCompletionMap[topicBaseId].total++;
+                    if (isChecked) topicCompletionMap[topicBaseId].checked++;
+                });
+
+                Object.values(topicCompletionMap).forEach(topic => {
+                    if (topic.checked === topic.total) completedTopicCount++;
+                });
+
+                const subjectPercentages = [];
+                let subjectsMastered = 0;
+                let totalProjectedScore = 0;
+                
+                const notesData = [];
+                const practiceData = [];
+                const revisionData = [];
+
+                for (const subject in syllabus) {
+                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                    const percentage = subjectTotals[subjectId] > 0 ? Math.round((subjectProgress[subjectId] / subjectTotals[subjectId]) * 100) : 0;
+                    subjectPercentages.push(percentage);
+                    
+                    // Projected Score calculation
+                    const weight = subjectWeightages[subject] || 0;
+                    totalProjectedScore += (percentage / 100) * weight;
+                    
+                    // Stacked Bar Chart Calculations (Normalizing to 100%)
+                    const totalTopics = syllabus[subject].length;
+                    // Weights per topic: 1 note (14.2%), 3 practice (42.8%), 3 revision (42.8%) = 7 items
+                    const nVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].notes / totalTopics) * 14.28) : 0;
+                    const pVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].practice / (totalTopics * 3)) * 42.86) : 0;
+                    const rVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].revision / (totalTopics * 3)) * 42.86) : 0;
+                    
+                    notesData.push(nVal);
+                    practiceData.push(pVal);
+                    revisionData.push(rVal);
+                    
+                    // Update DOM
+                    const progressBar = document.getElementById(`progress-${subjectId}`);
+                    const progressText = document.getElementById(`progress-text-${subjectId}`);
+                    const icon = document.getElementById(`icon-${subjectId}`);
+                    const folderIcon = document.querySelector(`#icon-${subjectId} + .folder-icon`);
+                    
+                    if (progressBar && progressText) {
+                        progressBar.style.width = `${percentage}%`;
+                        progressText.textContent = `${percentage}%`;
+                        
+                        if (percentage === 100) {
+                            if (!subjectCompletionState[subjectId]) subjectsMastered++;
+                            icon.classList.remove('opacity-0', 'scale-50');
+                            icon.classList.add('opacity-100', 'scale-100');
+                            folderIcon.classList.add('opacity-0', 'scale-50', 'absolute');
+                            
+                            if (!subjectCompletionState[subjectId]) {
+                                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#6366f1', '#a855f7', '#3b82f6'] });
+                                subjectCompletionState[subjectId] = true;
+                            }
+                        } else {
+                            icon.classList.add('opacity-0', 'scale-50');
+                            icon.classList.remove('opacity-100', 'scale-100');
+                            folderIcon.classList.remove('opacity-0', 'scale-50', 'absolute');
+                            subjectCompletionState[subjectId] = false;
+                        }
                     }
                 }
-            }
-            
-            subjectsMastered = subjectPercentages.filter(p => p === 100).length;
+                
+                // Recalculate accurately based on current array rather than potentially stale increments
+                subjectsMastered = subjectPercentages.filter(p => p === 100).length;
 
-            const overallPercentage = totalCheckboxes > 0 ? Math.round((totalChecked / totalCheckboxes) * 100) : 0;
-            document.getElementById('overall-progress').style.width = `${overallPercentage}%`;
-            document.getElementById('overall-progress-text').textContent = `${overallPercentage}%`;
-            
-            document.getElementById('metric-total-completion').textContent = `${overallPercentage}%`;
-            document.getElementById('metric-projected-score').textContent = totalProjectedScore % 1 === 0 ? totalProjectedScore : totalProjectedScore.toFixed(1);
-            document.getElementById('metric-topics-completed').textContent = completedTopicCount;
-            document.getElementById('metric-revisions-done').textContent = revisionsDone;
+                const overallPercentage = totalCheckboxes > 0 ? Math.round((totalChecked / totalCheckboxes) * 100) : 0;
+                document.getElementById('overall-progress').style.width = `${overallPercentage}%`;
+                document.getElementById('overall-progress-text').textContent = `${overallPercentage}%`;
+                
+                // Dashboard Metrics
+                document.getElementById('metric-total-completion').textContent = `${overallPercentage}%`;
+                // Format projected score to 1 decimal place max (e.g. 45.2)
+                document.getElementById('metric-projected-score').textContent = totalProjectedScore % 1 === 0 ? totalProjectedScore : totalProjectedScore.toFixed(1);
+                document.getElementById('metric-topics-completed').textContent = completedTopicCount;
+                document.getElementById('metric-revisions-done').textContent = revisionsDone;
 
-            if (radarChart && barChart) {
-                radarChart.data.datasets.data = subjectPercentages;
-                barChart.data.datasets.data = notesData;
-                barChart.data.datasets.data = practiceData;
-                barChart.data.datasets.data = revisionData;
+                // Update Charts
+                radarChart.data.datasets[0].data = subjectPercentages;
+                barChart.data.datasets[0].data = notesData;
+                barChart.data.datasets[1].data = practiceData;
+                barChart.data.datasets[2].data = revisionData;
+                
                 radarChart.update();
                 barChart.update();
             }
-        }
 
-        async function handleCheckboxChange(e) {
-            if (e.target.classList.contains('custom-checkbox') && currentUser) {
-                const id = e.target.id;
-                checkboxStates[id] = e.target.checked;
-                updateMetricsAndCharts(); 
-                
-                try {
-                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
-                } catch(err) { console.warn("Failed to write to localStorage"); }
-                
-                if (navigator.onLine) {
-                    try {
-                        await setDoc(getUserDocRef(currentUser.uid), { data: checkboxStates }, { merge: true });
-                    } catch (err) {
-                        console.error("Cloud save failed.", err);
-                    }
-                }
-            }
-        }
-
-        function setupFirestoreListener(userId) {
-            if (unsubscribe) unsubscribe();
-            
-            unsubscribe = onSnapshot(getUserDocRef(userId), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().data) {
-                    checkboxStates = docSnap.data().data;
-                    try {
-                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
-                    } catch(err) {}
-                } else {
-                    let localData = null;
-                    try { localData = localStorage.getItem(LOCAL_STORAGE_KEY); } catch(err){}
-                    if (!localData) {
-                        checkboxStates = {};
-                    }
-                }
-                updateMetricsAndCharts();
-            }, (error) => {
-                console.error("Firestore listener error:", error);
-            });
-        }
-
-        const networkStatusBadge = document.getElementById('network-status');
-        
-        async function handleConnectionChange() {
-            if (navigator.onLine) {
-                networkStatusBadge.classList.add('hidden');
-                if (currentUser) {
-                    let localData = null;
-                    try { localData = localStorage.getItem(LOCAL_STORAGE_KEY); } catch(err){}
+            // Sync interactions to state and Firestore (With Offline Support)
+            async function handleCheckboxChange(e) {
+                if (e.target.classList.contains('custom-checkbox') && currentUser) {
+                    const id = e.target.id;
+                    checkboxStates[id] = e.target.checked;
+                    updateMetricsAndCharts(); 
                     
-                    if (localData) {
+                    // 1. Instantly save locally for Offline Support
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
+                    
+                    // 2. Sync to Cloud if Online
+                    if (navigator.onLine) {
                         try {
-                            const parsedData = JSON.parse(localData);
-                            await setDoc(getUserDocRef(currentUser.uid), { data: parsedData }, { merge: true });
-                        } catch (e) {
-                            console.error("Auto-sync failed", e);
+                            const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
+                            await setDoc(userDocRef, { data: checkboxStates }, { merge: true });
+                        } catch (err) {
+                            console.error("Cloud save failed, data is safely cached locally.", err);
                         }
                     }
                 }
-            } else {
-                networkStatusBadge.classList.remove('hidden');
             }
-        }
 
-        window.addEventListener('online', handleConnectionChange);
-        window.addEventListener('offline', handleConnectionChange);
-        handleConnectionChange(); 
-
-        // --- PROGRESSIVE WEB APP (PWA) INJECTION ---
-        // Safely injecting only the manifest to prevent Blob SW crashes
-        try {
-            const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏆</text></svg>`;
-            const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
-            
-            const manifest = {
-                name: "GATE CSE Tracker",
-                short_name: "GATE Tracker",
-                description: "Master the GATE CSE syllabus systematically.",
-                start_url: location.href,
-                display: "standalone",
-                background_color: "#f8fafc",
-                theme_color: "#4f46e5",
-                icons: [{
-                    src: iconUrl,
-                    sizes: "192x192 512x512",
-                    type: "image/svg+xml"
-                }]
-            };
-            
-            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-            const link = document.createElement('link');
-            link.rel = 'manifest';
-            link.href = URL.createObjectURL(manifestBlob);
-            document.head.appendChild(link);
-        } catch(e) {
-            console.warn("PWA manifest bypass", e);
-        }
-
-        // --- AUTHENTICATION & BOOTSTRAP ---
-        const authScreen = document.getElementById('auth-screen');
-        const initialLoader = document.getElementById('initial-loader');
-        const authCard = document.getElementById('auth-card');
-        const appContainer = document.getElementById('app-container');
-        const userProfileImgContainer = document.getElementById('user-profile-img-container');
-
-        // Immediately build the core UI
-        generateSyllabusHTML();
-        generateMarksTable();
-        initCharts();
-        initTrendAnalytics();
-        container.addEventListener('change', handleCheckboxChange);
-        
-        // Fast Boot: Recover local storage without crashing
-        try {
-            const cachedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (cachedData) {
-                checkboxStates = JSON.parse(cachedData);
-                updateMetricsAndCharts();
-            }
-        } catch(e) {
-            console.warn("Local storage blocked/failed");
-        }
-
-        // Setup Firebase Auth State tracking
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                
-                authScreen.classList.add('opacity-0');
-                setTimeout(() => {
-                    authScreen.classList.add('hidden');
-                    appContainer.classList.remove('hidden');
-                }, 500);
-
-                const photo = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'U'}&background=e0e7ff&color=4f46e5`;
-                const name = user.displayName || 'Student';
-                
-                userProfileImgContainer.innerHTML = `
-                    <img src="${photo}" alt="User" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover">
-                    <svg class="w-4 h-4 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                `;
-                document.getElementById('dropdown-user-name').textContent = name;
-                
-                setupFirestoreListener(user.uid);
-            } else {
-                currentUser = null;
-                initialLoader.classList.add('hidden');
-                authCard.classList.remove('hidden');
-                authScreen.classList.remove('hidden', 'opacity-0');
-                appContainer.classList.add('hidden');
+            function setupFirestoreListener(userId) {
                 if (unsubscribe) unsubscribe();
+                // Canvas Environment Path Standard
+                const userDocRef = doc(db, 'artifacts', appId, 'users', userId, 'progress', 'state');
+                
+                unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists() && docSnap.data().data) {
+                        checkboxStates = docSnap.data().data;
+                        // Cache the latest cloud truth locally
+                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
+                    } else {
+                        // If no cloud data, try not to overwrite local if local exists (merging edge case)
+                        if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
+                            checkboxStates = {};
+                        }
+                    }
+                    updateMetricsAndCharts();
+                }, (error) => {
+                    console.error("Firestore listener error:", error);
+                });
             }
-        });
 
-        document.getElementById('login-btn').addEventListener('click', async () => {
-            const btn = document.getElementById('login-btn');
-            const orig = btn.innerHTML;
-            btn.innerHTML = `<div class="w-5 h-5 border-2 border-slate-400 border-t-slate-700 rounded-full animate-spin"></div>`;
-            btn.disabled = true;
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (err) {
-                alert("Sign-in failed.");
-                btn.innerHTML = orig;
-                btn.disabled = false;
-            }
-        });
-
-        // --- UI LOGIC ---
-        const profileTrigger = document.getElementById('user-profile-trigger');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        
-        profileTrigger.addEventListener('click', (e) => {
-            e.stopPropagation();
-            profileDropdown.classList.toggle('opacity-0');
-            profileDropdown.classList.toggle('pointer-events-none');
-            profileDropdown.classList.toggle('scale-95');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-            }
-        });
-
-        const tabs = [
-            { btn: document.getElementById('tab-syllabus'), view: document.getElementById('syllabus-content') },
-            { btn: document.getElementById('tab-dashboard'), view: document.getElementById('dashboard-content') },
-            { btn: document.getElementById('tab-marks'), view: document.getElementById('marks-content') }
-        ];
-
-        function switchTab(activeBtnId) {
-            tabs.forEach(tab => {
-                if (tab.btn.id === activeBtnId) {
-                    tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
-                    tab.view.classList.remove('hidden');
+            // --- NETWORK SYNCHRONIZATION ---
+            const networkStatusBadge = document.getElementById('network-status');
+            
+            async function handleConnectionChange() {
+                if (navigator.onLine) {
+                    networkStatusBadge.classList.add('hidden');
+                    // We just came online! Push any offline progress up to the cloud.
+                    if (currentUser) {
+                        const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                        if (localData) {
+                            try {
+                                const parsedData = JSON.parse(localData);
+                                const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
+                                await setDoc(userDocRef, { data: parsedData }, { merge: true });
+                                console.log("Successfully synced offline data to the cloud.");
+                            } catch (e) {
+                                console.error("Auto-sync failed", e);
+                            }
+                        }
+                    }
                 } else {
-                    tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200";
-                    tab.view.classList.add('hidden');
+                    // We are offline
+                    networkStatusBadge.classList.remove('hidden');
+                }
+            }
+
+            window.addEventListener('online', handleConnectionChange);
+            window.addEventListener('offline', handleConnectionChange);
+            handleConnectionChange(); // Check initial status
+
+            // --- PROGRESSIVE WEB APP (PWA) INJECTION ---
+            function injectPWA() {
+                // Generate a data-uri icon for the manifest
+                const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏆</text></svg>`;
+                const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+                
+                const manifest = {
+                    name: "GATE CSE Tracker",
+                    short_name: "GATE Tracker",
+                    description: "Master the GATE CSE syllabus systematically.",
+                    start_url: location.href,
+                    display: "standalone",
+                    background_color: "#f8fafc",
+                    theme_color: "#4f46e5",
+                    icons: [{
+                        src: iconUrl,
+                        sizes: "192x192 512x512",
+                        type: "image/svg+xml"
+                    }]
+                };
+                
+                const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+                
+                const link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = manifestUrl;
+                document.head.appendChild(link);
+                
+                // Very basic Service Worker to cache the application shell
+                const swCode = `
+                    const CACHE_NAME = 'gate-tracker-pwa-v1';
+                    self.addEventListener('install', event => {
+                        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll([location.href])));
+                    });
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            fetch(event.request).catch(() => caches.match(event.request))
+                        );
+                    });
+                `;
+                
+                const swBlob = new Blob([swCode], {type: 'application/javascript'});
+                const swUrl = URL.createObjectURL(swBlob);
+                
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register(swUrl).then(() => {
+                        console.log('PWA Ready: Service Worker registered for offline use.');
+                    }).catch((err) => console.log('SW registration bypassed (expected in sandboxed environments).'));
+                }
+            }
+
+            // --- AUTHENTICATION ---
+            const authScreen = document.getElementById('auth-screen');
+            const initialLoader = document.getElementById('initial-loader');
+            const authCard = document.getElementById('auth-card');
+            const appContainer = document.getElementById('app-container');
+            const userProfileImgContainer = document.getElementById('user-profile-img-container');
+
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (err) {
+                    console.log("Canvas auth unavailable, falling back to UI login");
+                    initialLoader.classList.add('hidden');
+                    authCard.classList.remove('hidden');
+                }
+            };
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    
+                    // Animate out Auth Screen
+                    authScreen.classList.add('opacity-0');
+                    setTimeout(() => {
+                        authScreen.classList.add('hidden');
+                        appContainer.classList.remove('hidden');
+                    }, 500);
+
+                    // Set Profile Info
+                    const photo = user.photoURL || `https://ui-avatars.com/api/?name=${user.isAnonymous ? 'Guest' : user.displayName || 'U'}&background=e0e7ff&color=4f46e5`;
+                    const name = user.isAnonymous ? 'Guest User' : (user.displayName || 'Student');
+                    
+                    userProfileImgContainer.innerHTML = `
+                        <img src="${photo}" alt="User" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover">
+                        <svg class="w-4 h-4 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    `;
+                    document.getElementById('dropdown-user-name').textContent = name;
+                    
+                    setupFirestoreListener(user.uid);
+                } else {
+                    currentUser = null;
+                    initialLoader.classList.add('hidden');
+                    authCard.classList.remove('hidden');
+                    authScreen.classList.remove('hidden', 'opacity-0');
+                    appContainer.classList.add('hidden');
+                    if (unsubscribe) unsubscribe();
                 }
             });
-        }
 
-        document.getElementById('tab-syllabus').addEventListener('click', () => switchTab('tab-syllabus'));
-        document.getElementById('tab-dashboard').addEventListener('click', () => switchTab('tab-dashboard'));
-        document.getElementById('tab-marks').addEventListener('click', () => switchTab('tab-marks'));
-
-        const btnAvg = document.getElementById('toggle-average');
-        const btnMed = document.getElementById('toggle-median');
-        
-        btnAvg.addEventListener('click', () => {
-            currentMarksMetric = 'average';
-            btnAvg.className = "px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
-            btnMed.className = "px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
-            generateMarksTable();
-        });
-        
-        btnMed.addEventListener('click', () => {
-            currentMarksMetric = 'median';
-            btnMed.className = "px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-purple-600 shadow-sm transition-all duration-200";
-            btnAvg.className = "px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
-            generateMarksTable();
-        });
-
-        const openModal = (modalId, contentId) => {
-            document.getElementById(modalId).classList.remove('opacity-0', 'pointer-events-none');
-            document.getElementById(contentId).classList.remove('scale-95');
-            document.getElementById(contentId).classList.add('scale-100');
-        };
-        
-        const closeModal = (modalId, contentId) => {
-            document.getElementById(modalId).classList.add('opacity-0', 'pointer-events-none');
-            document.getElementById(contentId).classList.remove('scale-100');
-            document.getElementById(contentId).classList.add('scale-95');
-        };
-
-        document.getElementById('reset-btn').addEventListener('click', () => {
-            profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95'); 
-            openModal('reset-modal', 'reset-modal-content');
-        });
-        document.getElementById('cancel-reset').addEventListener('click', () => closeModal('reset-modal', 'reset-modal-content'));
-        
-        document.getElementById('confirm-reset').addEventListener('click', async () => {
-            if(currentUser) {
-                checkboxStates = {};
+            // Fallback Google Login logic
+            document.getElementById('login-btn').addEventListener('click', async () => {
+                const btn = document.getElementById('login-btn');
+                const orig = btn.innerHTML;
+                btn.innerHTML = `<div class="w-5 h-5 border-2 border-slate-400 border-t-slate-700 rounded-full animate-spin"></div>`;
+                btn.disabled = true;
                 try {
-                    localStorage.removeItem(LOCAL_STORAGE_KEY);
-                } catch(err) {}
-                
-                await setDoc(getUserDocRef(currentUser.uid), { data: {} });
-                updateMetricsAndCharts();
+                    await signInWithPopup(auth, provider);
+                } catch (err) {
+                    alert("Sign-in failed. Check console.");
+                    console.error(err);
+                    btn.innerHTML = orig;
+                    btn.disabled = false;
+                }
+            });
+
+            // --- UI LOGIC ---
+            
+            // Profile Dropdown Toggle
+            const profileTrigger = document.getElementById('user-profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            profileTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('opacity-0');
+                profileDropdown.classList.toggle('pointer-events-none');
+                profileDropdown.classList.toggle('scale-95');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                }
+            });
+
+            // Tab Switching Logic (Refactored for 3 tabs)
+            const tabs = [
+                { btn: document.getElementById('tab-syllabus'), view: document.getElementById('syllabus-content') },
+                { btn: document.getElementById('tab-dashboard'), view: document.getElementById('dashboard-content') },
+                { btn: document.getElementById('tab-marks'), view: document.getElementById('marks-content') }
+            ];
+
+            function switchTab(activeBtnId) {
+                tabs.forEach(tab => {
+                    if (tab.btn.id === activeBtnId) {
+                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                        tab.view.classList.remove('hidden');
+                    } else {
+                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200";
+                        tab.view.classList.add('hidden');
+                    }
+                });
             }
-            closeModal('reset-modal', 'reset-modal-content');
+
+            document.getElementById('tab-syllabus').addEventListener('click', () => switchTab('tab-syllabus'));
+            document.getElementById('tab-dashboard').addEventListener('click', () => switchTab('tab-dashboard'));
+            document.getElementById('tab-marks').addEventListener('click', () => switchTab('tab-marks'));
+
+            // Marks Metric Toggle Logic
+            const btnAvg = document.getElementById('toggle-average');
+            const btnMed = document.getElementById('toggle-median');
+            
+            btnAvg.addEventListener('click', () => {
+                currentMarksMetric = 'average';
+                btnAvg.className = "px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                btnMed.className = "px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
+                generateMarksTable();
+            });
+            
+            btnMed.addEventListener('click', () => {
+                currentMarksMetric = 'median';
+                btnMed.className = "px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-purple-600 shadow-sm transition-all duration-200";
+                btnAvg.className = "px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
+                generateMarksTable();
+            });
+
+            // Modal Utilities
+            const openModal = (modalId, contentId) => {
+                document.getElementById(modalId).classList.remove('opacity-0', 'pointer-events-none');
+                document.getElementById(contentId).classList.remove('scale-95');
+                document.getElementById(contentId).classList.add('scale-100');
+            };
+            
+            const closeModal = (modalId, contentId) => {
+                document.getElementById(modalId).classList.add('opacity-0', 'pointer-events-none');
+                document.getElementById(contentId).classList.remove('scale-100');
+                document.getElementById(contentId).classList.add('scale-95');
+            };
+
+            // Reset Modal Logic
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95'); // Hide dropdown
+                openModal('reset-modal', 'reset-modal-content');
+            });
+            document.getElementById('cancel-reset').addEventListener('click', () => closeModal('reset-modal', 'reset-modal-content'));
+            
+            document.getElementById('confirm-reset').addEventListener('click', async () => {
+                if(currentUser) {
+                    checkboxStates = {};
+                    const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
+                    await setDoc(userDocRef, { data: {} });
+                }
+                closeModal('reset-modal', 'reset-modal-content');
+            });
+
+            // Guide Modal Logic
+            document.getElementById('guide-btn').addEventListener('click', () => {
+                profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95'); // Hide dropdown
+                openModal('guide-modal', 'guide-modal-content');
+            });
+            document.getElementById('close-guide').addEventListener('click', () => closeModal('guide-modal', 'guide-modal-content'));
+            document.getElementById('got-it-btn').addEventListener('click', () => closeModal('guide-modal', 'guide-modal-content'));
+
+            // Logout Logic
+            document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+            // Bootstrap
+            generateSyllabusHTML();
+            generateMarksTable();
+            initCharts();
+            initTrendAnalytics();
+            container.addEventListener('change', handleCheckboxChange);
+            
+            // Fast Boot: Hydrate UI instantly from local cache if available
+            const cachedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (cachedData) {
+                try {
+                    checkboxStates = JSON.parse(cachedData);
+                    updateMetricsAndCharts();
+                } catch(e) {}
+            }
+            
+            initAuth(); // Fire auth init
+            injectPWA(); // Register offline capabilities
         });
-
-        document.getElementById('guide-btn').addEventListener('click', () => {
-            profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-            openModal('guide-modal', 'guide-modal-content');
-        });
-        document.getElementById('close-guide').addEventListener('click', () => closeModal('guide-modal', 'guide-modal-content'));
-        document.getElementById('got-it-btn').addEventListener('click', () => closeModal('guide-modal', 'guide-modal-content'));
-
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-
     </script>
 </body>
 </html>
