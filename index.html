@@ -108,6 +108,10 @@
             box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3), 0 2px 4px -1px rgba(79, 70, 229, 0.06);
             transform: translateY(-1px);
         }
+
+        /* Hide Scrollbar for Tabs */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen text-slate-800 antialiased selection:bg-brand-500 selection:text-white pb-20">
@@ -136,25 +140,21 @@
     </div>
 
     <!-- Main App Container -->
-    <div id="app-container" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 hidden animate-fade-in relative z-10">
+    <div id="app-container" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 md:pt-8 hidden animate-fade-in relative z-10">
         
         <!-- Top Navigation -->
-        <header class="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 z-50">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 mb-6 md:mb-10 z-50">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30 text-white">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30 text-white">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
                 <div>
                     <div class="flex items-center">
-                        <h1 class="text-2xl md:text-3xl font-display font-bold text-white tracking-tight drop-shadow-md">GATE CSE Tracker</h1>
-                        <div id="network-status" class="hidden ml-3 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white shadow-sm flex items-center gap-1 transition-all">
-                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" /></svg>
-                            Offline Mode
-                        </div>
+                        <h1 class="text-xl md:text-3xl font-display font-bold text-white tracking-tight drop-shadow-md">GATE CSE Tracker</h1>
                     </div>
-                    <p class="text-sm font-medium text-brand-100 mt-0.5">Master the syllabus, systematically.</p>
+                    <p class="text-xs md:text-sm font-medium text-brand-100 mt-0.5">Master the syllabus, systematically.</p>
                 </div>
             </div>
 
@@ -197,29 +197,29 @@
         <main class="glass rounded-3xl shadow-2xl overflow-hidden mb-12">
             
             <!-- Sticky Header for Tabs and Overall Progress -->
-            <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 p-6 md:px-8">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 p-4 md:p-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                     
                     <!-- Tabs -->
-                    <div class="flex bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/50 w-full md:w-auto overflow-x-auto">
-                        <button id="tab-syllabus" class="flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200">
+                    <div class="flex bg-slate-100/80 p-1 md:p-1.5 rounded-xl border border-slate-200/50 w-full md:w-auto overflow-x-auto no-scrollbar">
+                        <button id="tab-syllabus" class="flex-1 md:flex-none whitespace-nowrap text-xs md:text-sm font-semibold py-2 md:py-2.5 px-4 md:px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200">
                             Syllabus Flow
                         </button>
-                        <button id="tab-dashboard" class="flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200">
+                        <button id="tab-dashboard" class="flex-1 md:flex-none whitespace-nowrap text-xs md:text-sm font-semibold py-2 md:py-2.5 px-4 md:px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200">
                             Analytics
                         </button>
-                        <button id="tab-marks" class="flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200">
+                        <button id="tab-marks" class="flex-1 md:flex-none whitespace-nowrap text-xs md:text-sm font-semibold py-2 md:py-2.5 px-4 md:px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200">
                             Marks Distribution
                         </button>
                     </div>
 
                     <!-- Overall Progress -->
                     <div class="flex-1 max-w-md w-full">
-                        <div class="flex justify-between items-end mb-2">
-                            <span class="text-sm font-bold text-slate-700">Overall Completion</span>
-                            <span id="overall-progress-text" class="text-2xl font-display font-extrabold text-brand-600">0%</span>
+                        <div class="flex justify-between items-end mb-1 md:mb-2">
+                            <span class="text-xs md:text-sm font-bold text-slate-700">Overall Completion</span>
+                            <span id="overall-progress-text" class="text-lg md:text-2xl font-display font-extrabold text-brand-600">0%</span>
                         </div>
-                        <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
+                        <div class="h-2 md:h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
                             <div id="overall-progress" class="h-full bg-gradient-to-r from-brand-500 to-purple-500 progress-bar-fill rounded-full relative shadow-[0_0_10px_rgba(79,70,229,0.4)]" style="width: 0%;">
                             </div>
                         </div>
@@ -227,63 +227,63 @@
                 </div>
             </div>
 
-            <div class="p-6 md:p-8">
+            <div class="p-4 md:p-6 lg:p-8">
                 <!-- Syllabus Section -->
-                <div id="syllabus-content" class="space-y-6">
+                <div id="syllabus-content" class="space-y-4 md:space-y-6">
                     <!-- Javascript will inject accordions here -->
                 </div>
 
                 <!-- Dashboard Section -->
-                <div id="dashboard-content" class="hidden space-y-8">
+                <div id="dashboard-content" class="hidden space-y-6 md:space-y-8">
                     <!-- KPI Grid -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                        <div class="bg-white rounded-2xl p-4 md:p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3 md:mb-4">
+                                <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             </div>
-                            <p class="text-sm font-medium text-slate-500">Syllabus Coverage</p>
-                            <h4 id="metric-total-completion" class="text-3xl font-display font-bold text-slate-800 mt-1">0%</h4>
+                            <p class="text-[11px] md:text-sm font-medium text-slate-500 truncate">Syllabus Coverage</p>
+                            <h4 id="metric-total-completion" class="text-2xl md:text-3xl font-display font-bold text-slate-800 mt-0.5 md:mt-1">0%</h4>
                         </div>
-                        <div class="bg-white rounded-2xl p-5 border border-brand-100 shadow-sm hover:shadow-md transition-shadow bg-brand-50/30">
-                            <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        <div class="bg-white rounded-2xl p-4 md:p-5 border border-brand-100 shadow-sm hover:shadow-md transition-shadow bg-brand-50/30">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mb-3 md:mb-4">
+                                <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                             </div>
-                            <p class="text-sm font-medium text-brand-700">Projected Score</p>
-                            <div class="flex items-baseline gap-1 mt-1">
-                                <h4 id="metric-projected-score" class="text-3xl font-display font-bold text-brand-700">0</h4>
-                                <span class="text-sm font-semibold text-brand-600/70">/ 100</span>
+                            <p class="text-[11px] md:text-sm font-medium text-brand-700 truncate">Projected Score</p>
+                            <div class="flex items-baseline gap-1 mt-0.5 md:mt-1">
+                                <h4 id="metric-projected-score" class="text-2xl md:text-3xl font-display font-bold text-brand-700">0</h4>
+                                <span class="text-[10px] md:text-sm font-semibold text-brand-600/70">/ 100</span>
                             </div>
                         </div>
-                        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        <div class="bg-white rounded-2xl p-4 md:p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-3 md:mb-4">
+                                <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                             </div>
-                            <p class="text-sm font-medium text-slate-500">Topics Mastered</p>
-                            <h4 id="metric-topics-completed" class="text-3xl font-display font-bold text-slate-800 mt-1">0</h4>
+                            <p class="text-[11px] md:text-sm font-medium text-slate-500 truncate">Topics Mastered</p>
+                            <h4 id="metric-topics-completed" class="text-2xl md:text-3xl font-display font-bold text-slate-800 mt-0.5 md:mt-1">0</h4>
                         </div>
-                        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center mb-4">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5V4H4zm0 0L2 2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2M15 4v5h5V4h-5zm0 0l-2-2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2" /></svg>
+                        <div class="bg-white rounded-2xl p-4 md:p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center mb-3 md:mb-4">
+                                <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5V4H4zm0 0L2 2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2M15 4v5h5V4h-5zm0 0l-2-2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2" /></svg>
                             </div>
-                            <p class="text-sm font-medium text-slate-500">Total Revisions</p>
-                            <h4 id="metric-revisions-done" class="text-3xl font-display font-bold text-slate-800 mt-1">0</h4>
+                            <p class="text-[11px] md:text-sm font-medium text-slate-500 truncate">Total Revisions</p>
+                            <h4 id="metric-revisions-done" class="text-2xl md:text-3xl font-display font-bold text-slate-800 mt-0.5 md:mt-1">0</h4>
                         </div>
                     </div>
 
                     <!-- Charts Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
-                            <h3 class="text-lg font-display font-bold text-slate-800 mb-6">Subject Strengths</h3>
-                            <div class="relative h-[300px] w-full">
+                        <div class="bg-white rounded-3xl p-5 md:p-6 border border-slate-100 shadow-sm">
+                            <h3 class="text-lg font-display font-bold text-slate-800 mb-4 md:mb-6">Subject Strengths</h3>
+                            <div class="relative h-[250px] md:h-[300px] w-full">
                                 <canvas id="radarChart"></canvas>
                             </div>
                         </div>
-                        <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
-                            <div class="flex justify-between items-center mb-6">
+                        <div class="bg-white rounded-3xl p-5 md:p-6 border border-slate-100 shadow-sm">
+                            <div class="flex justify-between items-center mb-4 md:mb-6">
                                 <h3 class="text-lg font-display font-bold text-slate-800">Phase Bottlenecks</h3>
-                                <span class="text-xs font-semibold px-2 py-1 bg-slate-100 text-slate-500 rounded-md">Stacked View</span>
+                                <span class="text-[10px] md:text-xs font-semibold px-2 py-1 bg-slate-100 text-slate-500 rounded-md">Stacked View</span>
                             </div>
-                            <div class="relative h-[300px] w-full">
+                            <div class="relative h-[250px] md:h-[300px] w-full">
                                 <canvas id="barChart"></canvas>
                             </div>
                         </div>
@@ -292,18 +292,18 @@
 
                 <!-- Marks Distribution Section -->
                 <div id="marks-content" class="hidden space-y-6">
-                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
-                        <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div class="bg-white rounded-3xl p-5 md:p-8 border border-slate-100 shadow-sm">
+                        <div class="mb-5 md:mb-6 flex flex-col lg:flex-row lg:items-end justify-between gap-4">
                             <div>
-                                <h2 class="text-xl md:text-2xl font-display font-bold text-slate-800">Historical Marks Distribution</h2>
-                                <p class="text-slate-500 text-sm mt-1">Based on GATE CSE papers (2010 - 2025). Core subjects only (85 Marks).</p>
+                                <h2 class="text-lg md:text-2xl font-display font-bold text-slate-800">Historical Marks Distribution</h2>
+                                <p class="text-slate-500 text-xs md:text-sm mt-1">Based on GATE CSE papers (2010 - 2025). Core subjects only (85 Marks).</p>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <div class="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200/50">
-                                    <button id="toggle-average" class="px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="flex bg-slate-100 p-1 md:p-1.5 rounded-xl border border-slate-200/50 w-full sm:w-auto">
+                                    <button id="toggle-average" class="flex-1 sm:flex-none px-4 py-1.5 text-xs md:text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200">
                                         Average
                                     </button>
-                                    <button id="toggle-median" class="px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200">
+                                    <button id="toggle-median" class="flex-1 sm:flex-none px-4 py-1.5 text-xs md:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200">
                                         Median
                                     </button>
                                 </div>
@@ -313,13 +313,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse min-w-[500px]">
+                        <div class="overflow-x-auto no-scrollbar">
+                            <table class="w-full text-left border-collapse min-w-[450px]">
                                 <thead>
-                                    <tr class="border-b-2 border-slate-200 text-sm font-semibold text-slate-500">
-                                        <th class="pb-3 pl-2">Subject</th>
-                                        <th class="pb-3 text-right pr-4 w-24">Weightage</th>
-                                        <th class="pb-3 w-1/2">Proportion</th>
+                                    <tr class="border-b-2 border-slate-200 text-xs md:text-sm font-semibold text-slate-500">
+                                        <th class="pb-2 md:pb-3 pl-2">Subject</th>
+                                        <th class="pb-2 md:pb-3 text-right pr-4 w-20 md:w-24">Weightage</th>
+                                        <th class="pb-2 md:pb-3 w-1/2">Proportion</th>
                                     </tr>
                                 </thead>
                                 <tbody id="marks-table-body">
@@ -330,14 +330,14 @@
                     </div>
 
                     <!-- NEW: Deep Insights & Trend Analytics -->
-                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm mt-6 animate-slide-up" style="animation-delay: 100ms;">
-                        <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div class="bg-white rounded-3xl p-5 md:p-8 border border-slate-100 shadow-sm mt-6 animate-slide-up" style="animation-delay: 100ms;">
+                        <div class="mb-5 md:mb-6 flex flex-col lg:flex-row lg:items-end justify-between gap-4">
                             <div>
-                                <h2 class="text-xl md:text-2xl font-display font-bold text-slate-800">Deep Dive: Subject Trends</h2>
-                                <p class="text-slate-500 text-sm mt-1">Analyze how the weightage of each subject has shifted over the last 11 exams.</p>
+                                <h2 class="text-lg md:text-2xl font-display font-bold text-slate-800">Deep Dive: Subject Trends</h2>
+                                <p class="text-slate-500 text-xs md:text-sm mt-1">Analyze how the weightage of each subject has shifted over the last 11 exams.</p>
                             </div>
-                            <div class="relative w-full md:w-64">
-                                <select id="trend-subject-select" class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 font-semibold py-2.5 px-4 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors cursor-pointer">
+                            <div class="relative w-full lg:w-64">
+                                <select id="trend-subject-select" class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 font-semibold py-2 md:py-2.5 px-4 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors cursor-pointer text-sm md:text-base">
                                     <!-- Options injected via JS -->
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
@@ -347,22 +347,22 @@
                         </div>
 
                         <!-- Insight Metric Cards -->
-                        <div class="grid grid-cols-3 gap-4 mb-6">
-                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Highest Marks</p>
-                                <h4 id="insight-max" class="text-2xl font-display font-bold text-brand-600">0</h4>
+                        <div class="grid grid-cols-3 gap-2 md:gap-4 mb-6">
+                            <div class="bg-slate-50 rounded-xl md:rounded-2xl p-3 md:p-4 border border-slate-100">
+                                <p class="text-[10px] md:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5 md:mb-1 truncate">Highest</p>
+                                <h4 id="insight-max" class="text-xl md:text-2xl font-display font-bold text-brand-600">0</h4>
                             </div>
-                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Lowest Marks</p>
-                                <h4 id="insight-min" class="text-2xl font-display font-bold text-rose-500">0</h4>
+                            <div class="bg-slate-50 rounded-xl md:rounded-2xl p-3 md:p-4 border border-slate-100">
+                                <p class="text-[10px] md:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5 md:mb-1 truncate">Lowest</p>
+                                <h4 id="insight-min" class="text-xl md:text-2xl font-display font-bold text-rose-500">0</h4>
                             </div>
-                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Volatility</p>
-                                <h4 id="insight-volatility" class="text-lg md:text-xl font-display font-bold text-slate-700">Stable</h4>
+                            <div class="bg-slate-50 rounded-xl md:rounded-2xl p-3 md:p-4 border border-slate-100 flex flex-col justify-center">
+                                <p class="text-[10px] md:text-xs font-semibold text-slate-400 uppercase tracking-wider mb-0.5 md:mb-1 truncate">Volatility</p>
+                                <h4 id="insight-volatility" class="text-sm md:text-xl font-display font-bold text-slate-700 leading-tight">Stable</h4>
                             </div>
                         </div>
 
-                        <div class="relative h-[300px] w-full mt-4">
+                        <div class="relative h-[250px] md:h-[300px] w-full mt-4">
                             <canvas id="trendLineChart"></canvas>
                         </div>
                     </div>
@@ -456,6 +456,7 @@
         if (typeof __firebase_config !== 'undefined') {
             firebaseConfig = JSON.parse(__firebase_config);
         } else {
+
             firebaseConfig = {
             apiKey: "AIzaSyBVUTqPzWbMEzzdWbdQUY806SadUWvmUz8",
             authDomain: "gate-tracker-a561f.firebaseapp.com",
@@ -579,7 +580,6 @@
             let unsubscribe;
             let currentUser = null;
             const subjectCompletionState = {};
-            const LOCAL_STORAGE_KEY = 'gateTrackerState_offline';
 
             // Generate Modern UI
             function generateSyllabusHTML() {
@@ -594,22 +594,22 @@
                     delay += 50;
                     
                     let subjectHTML = `
-                        <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center gap-4 select-none relative z-10 bg-white">
-                            <div class="flex items-center space-x-4 w-full md:w-auto">
-                                <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 transition-colors group-hover:bg-brand-100 shrink-0">
-                                    <svg id="icon-${subjectId}" class="w-5 h-5 opacity-0 scale-50 transition-all duration-300 absolute text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                    <svg class="w-5 h-5 folder-icon transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                        <summary class="p-4 md:p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 select-none relative z-10 bg-white">
+                            <div class="flex items-center space-x-3 md:space-x-4 w-full md:w-auto">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 transition-colors group-hover:bg-brand-100 shrink-0">
+                                    <svg id="icon-${subjectId}" class="w-4 h-4 md:w-5 md:h-5 opacity-0 scale-50 transition-all duration-300 absolute text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <svg class="w-4 h-4 md:w-5 md:h-5 folder-icon transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                                 </div>
-                                <h2 class="text-lg font-display font-bold text-slate-800 flex-1">${subject}</h2>
+                                <h2 class="text-base md:text-lg font-display font-bold text-slate-800 flex-1">${subject}</h2>
                             </div>
                             
-                            <div class="w-full md:w-[300px] flex items-center space-x-4">
-                                <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
+                            <div class="w-full md:w-[300px] flex items-center space-x-3 md:space-x-4">
+                                <div class="flex-grow h-2 md:h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
                                     <div id="progress-${subjectId}" class="h-full bg-brand-500 progress-bar-fill rounded-full" style="width: 0%;"></div>
                                 </div>
-                                <span id="progress-text-${subjectId}" class="text-sm font-bold text-slate-600 w-10 text-right">0%</span>
-                                <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                                    <svg class="w-4 h-4 text-slate-400 arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                <span id="progress-text-${subjectId}" class="text-xs md:text-sm font-bold text-slate-600 w-8 md:w-10 text-right">0%</span>
+                                <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                    <svg class="w-3 h-3 md:w-4 md:h-4 text-slate-400 arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                 </div>
                             </div>
                         </summary>
@@ -624,13 +624,13 @@
                         totalCheckboxes += columns.length;
                         
                         subjectHTML += `
-                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-brand-300 transition-colors">
-                                <span class="text-sm font-semibold text-slate-700 md:w-1/3 leading-snug">${item}</span>
-                                <div class="flex flex-wrap md:flex-nowrap gap-2 md:gap-3 shrink-0">
+                            <div class="bg-white p-3 md:p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col xl:flex-row xl:items-center justify-between gap-3 md:gap-4 hover:border-brand-300 transition-colors">
+                                <span class="text-sm font-semibold text-slate-700 xl:w-1/3 leading-snug">${item}</span>
+                                <div class="flex flex-wrap gap-1.5 md:gap-2 xl:flex-nowrap shrink-0">
                                     ${columns.map(col => `
                                         <label class="pill-checkbox cursor-pointer" title="${col.tooltip}">
                                             <input type="checkbox" class="hidden custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
-                                            <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 transition-all duration-200 hover:bg-slate-200 select-none">
+                                            <div class="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-lg sm:rounded-xl flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 transition-all duration-200 hover:bg-slate-200 select-none">
                                                 ${col.label}
                                             </div>
                                         </label>
@@ -966,22 +966,19 @@
                 barChart.update();
             }
 
-            // Sync interactions to state and Firestore (With Offline Support)
+            // Sync interactions to state and Firestore
             async function handleCheckboxChange(e) {
                 if (e.target.classList.contains('custom-checkbox') && currentUser) {
                     const id = e.target.id;
                     checkboxStates[id] = e.target.checked;
                     updateMetricsAndCharts(); 
                     
-                    // 1. Instantly save locally for Fast UI boot
-                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
-                    
-                    // 2. Sync to Cloud
+                    // Sync directly to Cloud (Single Source of Truth)
                     try {
                         const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
                         await setDoc(userDocRef, { data: checkboxStates }, { merge: true });
                     } catch (err) {
-                        console.error("Cloud save failed, data is safely cached locally.", err);
+                        console.error("Cloud save failed.", err);
                     }
                 }
             }
@@ -994,86 +991,13 @@
                 unsubscribe = onSnapshot(userDocRef, (docSnap) => {
                     if (docSnap.exists() && docSnap.data().data) {
                         checkboxStates = docSnap.data().data;
-                        // Cache the latest cloud truth locally
-                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
                     } else {
-                        // If no cloud data, ensure local state is cleared to avoid clashes
                         checkboxStates = {};
-                        localStorage.removeItem(LOCAL_STORAGE_KEY);
                     }
                     updateMetricsAndCharts();
                 }, (error) => {
                     console.error("Firestore listener error:", error);
                 });
-            }
-
-            // --- NETWORK SYNCHRONIZATION ---
-            const networkStatusBadge = document.getElementById('network-status');
-            
-            async function handleConnectionChange() {
-                if (navigator.onLine) {
-                    networkStatusBadge.classList.add('hidden');
-                    // Removed destructive local storage push to prevent cross-device clashing
-                } else {
-                    // We are offline
-                    networkStatusBadge.classList.remove('hidden');
-                }
-            }
-
-            window.addEventListener('online', handleConnectionChange);
-            window.addEventListener('offline', handleConnectionChange);
-            handleConnectionChange(); // Check initial status
-
-            // --- PROGRESSIVE WEB APP (PWA) INJECTION ---
-            function injectPWA() {
-                // Generate a data-uri icon for the manifest
-                const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏆</text></svg>`;
-                const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
-                
-                const manifest = {
-                    name: "GATE CSE Tracker",
-                    short_name: "GATE Tracker",
-                    description: "Master the GATE CSE syllabus systematically.",
-                    start_url: location.href,
-                    display: "standalone",
-                    background_color: "#f8fafc",
-                    theme_color: "#4f46e5",
-                    icons: [{
-                        src: iconUrl,
-                        sizes: "192x192 512x512",
-                        type: "image/svg+xml"
-                    }]
-                };
-                
-                const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-                const manifestUrl = URL.createObjectURL(manifestBlob);
-                
-                const link = document.createElement('link');
-                link.rel = 'manifest';
-                link.href = manifestUrl;
-                document.head.appendChild(link);
-                
-                // Very basic Service Worker to cache the application shell
-                const swCode = `
-                    const CACHE_NAME = 'gate-tracker-pwa-v1';
-                    self.addEventListener('install', event => {
-                        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll([location.href])));
-                    });
-                    self.addEventListener('fetch', event => {
-                        event.respondWith(
-                            fetch(event.request).catch(() => caches.match(event.request))
-                        );
-                    });
-                `;
-                
-                const swBlob = new Blob([swCode], {type: 'application/javascript'});
-                const swUrl = URL.createObjectURL(swBlob);
-                
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.register(swUrl).then(() => {
-                        console.log('PWA Ready: Service Worker registered for offline use.');
-                    }).catch((err) => console.log('SW registration bypassed (expected in sandboxed environments).'));
-                }
             }
 
             // --- AUTHENTICATION ---
@@ -1173,10 +1097,10 @@
             function switchTab(activeBtnId) {
                 tabs.forEach(tab => {
                     if (tab.btn.id === activeBtnId) {
-                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-xs md:text-sm font-semibold py-2 md:py-2.5 px-4 md:px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
                         tab.view.classList.remove('hidden');
                     } else {
-                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200";
+                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-xs md:text-sm font-semibold py-2 md:py-2.5 px-4 md:px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200";
                         tab.view.classList.add('hidden');
                     }
                 });
@@ -1192,8 +1116,15 @@
             
             btnAvg.addEventListener('click', () => {
                 currentMarksMetric = 'average';
-                btnAvg.className = "px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
-                btnMed.className = "px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
+                btnAvg.className = "flex-1 sm:flex-none px-4 py-1.5 text-xs md:text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                btnMed.className = "flex-1 sm:flex-none px-4 py-1.5 text-xs md:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
+                generateMarksTable();
+            });
+            
+            btnMed.addEventListener('click', () => {
+                currentMarksMetric = 'median';
+                btnMed.className = "flex-1 sm:flex-none px-4 py-1.5 text-xs md:text-sm font-semibold rounded-lg bg-white text-purple-600 shadow-sm transition-all duration-200";
+                btnAvg.className = "flex-1 sm:flex-none px-4 py-1.5 text-xs md:text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
                 generateMarksTable();
             });
             
@@ -1228,7 +1159,6 @@
                 if(currentUser) {
                     // Force immediate UI reset
                     checkboxStates = {};
-                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({}));
                     updateMetricsAndCharts();
                     
                     // Update cloud
@@ -1256,17 +1186,7 @@
             initTrendAnalytics();
             container.addEventListener('change', handleCheckboxChange);
             
-            // Fast Boot: Hydrate UI instantly from local cache if available
-            const cachedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (cachedData) {
-                try {
-                    checkboxStates = JSON.parse(cachedData);
-                    updateMetricsAndCharts();
-                } catch(e) {}
-            }
-            
             initAuth(); // Fire auth init
-            injectPWA(); // Register offline capabilities
         });
     </script>
 </body>
