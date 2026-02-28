@@ -446,10 +446,17 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
-        // --- FIREBASE CONFIG ---
-        const firebaseConfig = {
+        // --- SECURE FIREBASE CONFIGURATION (Environment Adaptable) ---
+        const defaultAppId = 'gate-tracker-app';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : defaultAppId;
+        
+        let firebaseConfig;
+        if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            firebaseConfig = {
             apiKey: "AIzaSyBVUTqPzWbMEzzdWbdQUY806SadUWvmUz8",
             authDomain: "gate-tracker-a561f.firebaseapp.com",
             projectId: "gate-tracker-a561f",
@@ -457,9 +464,9 @@
             messagingSenderId: "322542809047",
             appId: "1:322542809047:web:86e719394ca02b6ef32592",
             measurementId: "G-2MBR978R7G"
-        };
+            };
+        }
         
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -966,17 +973,15 @@
                     checkboxStates[id] = e.target.checked;
                     updateMetricsAndCharts(); 
                     
-                    // 1. Instantly save locally for Offline Support
+                    // 1. Instantly save locally for Fast UI boot
                     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
                     
-                    // 2. Sync to Cloud if Online
-                    if (navigator.onLine) {
-                        try {
-                            const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
-                            await setDoc(userDocRef, { data: checkboxStates }, { merge: true });
-                        } catch (err) {
-                            console.error("Cloud save failed, data is safely cached locally.", err);
-                        }
+                    // 2. Sync to Cloud
+                    try {
+                        const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
+                        await setDoc(userDocRef, { data: checkboxStates }, { merge: true });
+                    } catch (err) {
+                        console.error("Cloud save failed, data is safely cached locally.", err);
                     }
                 }
             }
@@ -992,10 +997,9 @@
                         // Cache the latest cloud truth locally
                         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
                     } else {
-                        // If no cloud data, try not to overwrite local if local exists (merging edge case)
-                        if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
-                            checkboxStates = {};
-                        }
+                        // If no cloud data, ensure local state is cleared to avoid clashes
+                        checkboxStates = {};
+                        localStorage.removeItem(LOCAL_STORAGE_KEY);
                     }
                     updateMetricsAndCharts();
                 }, (error) => {
@@ -1009,20 +1013,7 @@
             async function handleConnectionChange() {
                 if (navigator.onLine) {
                     networkStatusBadge.classList.add('hidden');
-                    // We just came online! Push any offline progress up to the cloud.
-                    if (currentUser) {
-                        const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
-                        if (localData) {
-                            try {
-                                const parsedData = JSON.parse(localData);
-                                const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
-                                await setDoc(userDocRef, { data: parsedData }, { merge: true });
-                                console.log("Successfully synced offline data to the cloud.");
-                            } catch (e) {
-                                console.error("Auto-sync failed", e);
-                            }
-                        }
-                    }
+                    // Removed destructive local storage push to prevent cross-device clashing
                 } else {
                     // We are offline
                     networkStatusBadge.classList.remove('hidden');
@@ -1101,8 +1092,7 @@
                     }
                 } catch (err) {
                     console.log("Canvas auth unavailable, falling back to UI login");
-                    initialLoader.classList.add('hidden');
-                    authCard.classList.remove('hidden');
+                    // Do not unhide authCard here to prevent flashing for standard logged-in users
                 }
             };
 
@@ -1236,7 +1226,12 @@
             
             document.getElementById('confirm-reset').addEventListener('click', async () => {
                 if(currentUser) {
+                    // Force immediate UI reset
                     checkboxStates = {};
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({}));
+                    updateMetricsAndCharts();
+                    
+                    // Update cloud
                     const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
                     await setDoc(userDocRef, { data: {} });
                 }
