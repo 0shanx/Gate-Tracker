@@ -1,267 +1,471 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GATE CSE Prepration Tracker</title>
+    <title>GATE CSE Preparation Tracker</title>
+    
+    <!-- Modern Fonts: Outfit for Display, Inter for Body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Chart.js & Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            900: '#312e81',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'slide-up': 'slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
+        /* Custom Modern Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* gray-100 */
-        }
-        details, .card {
-            background-color: #ffffff;
-            animation: fadeIn 0.5s ease-out forwards;
-            opacity: 0;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        details > summary { list-style: none; background-color: #f9fafb; }
-        details > summary::-webkit-details-marker { display: none; }
-        details summary .arrow { transition: transform 0.2s; }
-        details[open] summary .arrow { transform: rotate(90deg); }
-        .progress-bar-container { position: relative; width: 100%; }
-        .progress-bar-bg { background-color: #e5e7eb; }
-        .progress-bar-fg {
-            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
-            transition: width 0.5s ease-in-out;
-        }
-        .progress-text {
-            position: absolute; left: 50%; top: 50%;
-            transform: translate(-50%, -50%);
-            color: #374151; font-size: 0.75rem; font-weight: 600;
-        }
-        .custom-checkbox {
-            appearance: none; background-color: #fff; border: 1px solid #d1d5db;
-            width: 1.25rem; height: 1.25rem; border-radius: 0.375rem;
-            display: inline-block; position: relative; cursor: pointer; transition: all 0.2s;
-        }
-        .custom-checkbox:hover { border-color: #a5b4fc; }
-        .custom-checkbox:checked {
-            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
-            border-color: #4f46e5;
-        }
-        .custom-checkbox:checked::after {
-            content: '✔'; position: absolute; color: white; font-size: 0.8rem;
-            font-weight: bold; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        }
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5); display: flex;
-            justify-content: center; align-items: center; z-index: 1000;
-        }
-        .completion-icon { display: none; color: #22c55e; }
-        .tab-btn {
-            padding: 0.5rem 1rem;
-            border-bottom: 3px solid transparent;
-            color: #4b5563; /* gray-600 */
-            transition: all 0.2s;
-        }
-        .tab-btn.active {
-            border-bottom-color: #4f46e5;
-            color: #4f46e5;
-            font-weight: 600;
-        }
-        
-        @media (min-width: 768px) {
-            .topic-grid-container {
-                display: grid;
-                grid-template-columns: 1fr repeat(7, 4rem);
-                gap: 0.5rem;
-                align-items: center;
-            }
-            .topic-grid-header {
-                display: contents; /* Makes children part of the grid */
-            }
-            .topic-item {
-                display: contents; /* Makes children part of the grid */
-            }
-            .topic-summary {
-                padding: 0.75rem 0.5rem;
-                border-bottom: 1px solid #f3f4f6;
-            }
-            .checkbox-grid {
-                display: grid;
-                grid-template-columns: repeat(7, 1fr);
-                border-bottom: 1px solid #f3f4f6;
-                padding: 0.75rem 0;
-            }
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background-attachment: fixed;
+            background-size: cover;
+            color: #0f172a;
         }
 
-        @media (max-width: 767px) {
-            .topic-grid-header {
-                display: none;
-            }
-            .topic-item {
-                border: 1px solid #e5e7eb;
-                border-radius: 0.5rem;
-                margin-bottom: 0.5rem;
-                overflow: hidden;
-            }
-            .topic-summary {
-                padding: 0.75rem;
-                font-weight: 600;
-                cursor: pointer;
-            }
-            .checkbox-grid {
-                padding: 0.75rem;
-                border-top: 1px solid #e5e7eb;
-                display: none; /* Hidden by default on mobile */
-            }
-            .checkbox-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0.5rem 0;
-            }
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hide details marker */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        
+        /* Smooth Details Accordion */
+        details summary .arrow-icon { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        details[open] summary .arrow-icon { transform: rotate(180deg); }
+        details[open] summary { border-bottom-color: transparent; }
+        
+        details .details-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        details[open] .details-content { grid-template-rows: 1fr; }
+        details .details-inner { overflow: hidden; }
+
+        /* Progress Bar Animation */
+        .progress-bar-fill { transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        /* Hide checkboxes, style labels */
+        .pill-checkbox input:checked + div {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3), 0 2px 4px -1px rgba(79, 70, 229, 0.06);
+            transform: translateY(-1px);
         }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="min-h-screen text-slate-800 antialiased selection:bg-brand-500 selection:text-white pb-20">
 
-    <!-- Auth Screen Overlay (With Splash Loader) -->
-    <div id="auth-screen" class="fixed inset-0 bg-[#f3f4f6] z-[9999] flex flex-col items-center justify-center transition-opacity duration-500 overflow-y-auto py-8">
-        
-        <!-- Splash Loader (Shows during Firebase check) -->
-        <div id="initial-loader" class="flex flex-col items-center justify-center animate-pulse">
-            <svg class="w-20 h-20 text-indigo-600 mb-4 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-            </svg>
-            <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Loading...</h2>
+    <!-- Auth / Splash Screen -->
+    <div id="auth-screen" class="fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-500 glass">
+        <!-- Loader -->
+        <div id="initial-loader" class="flex flex-col items-center justify-center">
+            <div class="text-6xl md:text-7xl animate-bounce mb-6 drop-shadow-2xl">🏆</div>
+            <h2 class="text-2xl font-display font-bold text-slate-800 tracking-tight animate-pulse">Syncing Tracker...</h2>
         </div>
 
-        <!-- Actual Login Card (Hidden initially) -->
-        <div id="auth-card" class="hidden text-center p-8 bg-white rounded-xl shadow-2xl max-w-md w-[90%] my-auto">
-            <h1 class="text-3xl font-bold text-gray-900">GATE CSE Syllabus Tracker</h1>
-            <p class="mt-2 text-gray-600">Please sign in to track your progress online.</p>
-            <button id="login-btn" class="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-3 transition-transform transform hover:scale-105 shadow-md">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,36.59,44,31.016,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
-                <span>Sign in with Google</span>
+        <!-- Fallback Login Card -->
+        <div id="auth-card" class="hidden w-full max-w-md p-8 m-4 bg-white rounded-3xl shadow-2xl border border-slate-100 text-center animate-slide-up">
+            <div class="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 -rotate-6 shadow-inner border border-amber-100 transition-transform hover:rotate-0 duration-300">
+                <span class="text-5xl drop-shadow-md">🏆</span>
+            </div>
+            <h1 class="text-3xl font-display font-extrabold text-slate-900 mb-2">GATE CSE Tracker</h1>
+            <p class="text-slate-500 mb-8 leading-relaxed">Your modern companion to conquer the GATE syllabus. Sign in to sync your progress.</p>
+            
+            <button id="login-btn" class="w-full relative group bg-white border-2 border-slate-200 hover:border-brand-500 hover:bg-slate-50 text-slate-700 font-semibold py-3.5 px-6 rounded-xl flex items-center justify-center space-x-3 transition-all duration-200">
+                <svg class="w-5 h-5" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.99,36.59,44,31.016,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+                <span>Continue with Google</span>
             </button>
         </div>
     </div>
 
-    <div id="app-container" class="container mx-auto p-4 sm:p-6 md:p-8 hidden">
-        <header class="mb-8">
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 text-center sm:text-left">GATE CSE Preparation Tracker</h1>
-                    <p class="mt-1 text-lg text-gray-600 text-center sm:text-left">Your dynamic and modern study companion.</p>
+    <!-- Main App Container -->
+    <div id="app-container" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 hidden animate-fade-in relative z-10">
+        
+        <!-- Top Navigation -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 z-50">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30 text-white">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                 </div>
-                <div id="user-profile" class="flex items-center gap-4 bg-white p-2 pr-4 rounded-full shadow-sm border border-gray-200">
-                    <!-- User info will be injected here -->
+                <div>
+                    <div class="flex items-center">
+                        <h1 class="text-2xl md:text-3xl font-display font-bold text-white tracking-tight drop-shadow-md">GATE CSE Tracker</h1>
+                        <div id="network-status" class="hidden ml-3 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white shadow-sm flex items-center gap-1 transition-all">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" /></svg>
+                            Offline Mode
+                        </div>
+                    </div>
+                    <p class="text-sm font-medium text-brand-100 mt-0.5">Master the syllabus, systematically.</p>
+                </div>
+            </div>
+
+            <!-- Profile & Dropdown -->
+            <div class="relative group">
+                <div id="user-profile-trigger" class="flex items-center gap-2 glass pl-2 pr-4 py-1.5 rounded-full cursor-pointer hover:bg-white/95 transition-colors shadow-sm">
+                    <!-- Javascript injects profile picture here -->
+                    <div id="user-profile-img-container" class="flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-full bg-slate-200 animate-pulse"></div>
+                    </div>
+                </div>
+                
+                <!-- Dropdown Menu -->
+                <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 opacity-0 pointer-events-none transition-all duration-200 transform origin-top-right scale-95 z-50 overflow-hidden">
+                    <div class="p-3 border-b border-slate-100 bg-slate-50/50">
+                        <p class="text-xs text-slate-500 font-medium mb-1">Signed in as</p>
+                        <p id="dropdown-user-name" class="text-sm font-bold text-slate-800 truncate">Loading...</p>
+                    </div>
+                    <div class="p-2">
+                        <button id="guide-btn" class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-600 rounded-lg transition-colors flex items-center gap-3">
+                            <div class="p-1.5 rounded-md bg-slate-100 text-slate-500"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                            Preparation Guide
+                        </button>
+                        <button id="reset-btn" class="w-full text-left px-3 py-2.5 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-3 mt-1">
+                            <div class="p-1.5 rounded-md bg-rose-100 text-rose-500"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></div>
+                            Reset Progress
+                        </button>
+                    </div>
+                    <div class="p-2 border-t border-slate-100">
+                        <button id="logout-btn" class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors flex items-center gap-3">
+                            <div class="p-1.5 rounded-md bg-slate-100 text-slate-500"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg></div>
+                            Sign Out
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Tabs -->
-        <div class="mb-6 border-b border-gray-300">
-            <nav class="flex space-x-4" aria-label="Tabs">
-                <button id="tab-syllabus" class="tab-btn active">Syllabus</button>
-                <button id="tab-dashboard" class="tab-btn">Dashboard</button>
-            </nav>
-        </div>
+        <!-- Main Content Area (Glass Panel) -->
+        <main class="glass rounded-3xl shadow-2xl overflow-hidden mb-12">
+            
+            <!-- Sticky Header for Tabs and Overall Progress -->
+            <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 p-6 md:px-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    
+                    <!-- Tabs -->
+                    <div class="flex bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/50 w-full md:w-auto overflow-x-auto">
+                        <button id="tab-syllabus" class="flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200">
+                            Syllabus Flow
+                        </button>
+                        <button id="tab-dashboard" class="flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200">
+                            Analytics
+                        </button>
+                        <button id="tab-marks" class="flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200">
+                            Marks Distribution
+                        </button>
+                    </div>
 
-        <!-- Syllabus Content -->
-        <div id="syllabus-content">
-            <div class="card p-6 rounded-xl shadow-lg mb-8">
-                <h2 class="text-xl font-semibold mb-3">Overall Progress</h2>
-                <div class="relative h-6">
-                    <div class="absolute inset-0 bg-gray-200 rounded-full flex justify-center items-center">
-                        <span id="overall-progress-text-bg" class="text-gray-700 text-xs font-semibold">0%</span>
-                    </div>
-                    <div id="overall-progress" class="absolute inset-0 progress-bar-fg rounded-full flex justify-center items-center overflow-hidden" style="width: 0%;">
-                        <span id="overall-progress-text-fg" class="text-white text-xs font-semibold">0%</span>
+                    <!-- Overall Progress -->
+                    <div class="flex-1 max-w-md w-full">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-sm font-bold text-slate-700">Overall Completion</span>
+                            <span id="overall-progress-text" class="text-2xl font-display font-extrabold text-brand-600">0%</span>
+                        </div>
+                        <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
+                            <div id="overall-progress" class="h-full bg-gradient-to-r from-brand-500 to-purple-500 progress-bar-fill rounded-full relative shadow-[0_0_10px_rgba(79,70,229,0.4)]" style="width: 0%;">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div id="syllabus-container" class="space-y-4"></div>
-        </div>
 
-        <!-- Dashboard Content -->
-        <div id="dashboard-content" class="hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Insight Cards -->
-                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
-                    <div class="bg-indigo-100 p-3 rounded-full"><svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-                    <div><h4 class="text-sm font-medium text-gray-500">Total Completion</h4><p id="metric-total-completion" class="text-2xl font-bold mt-1">0%</p></div>
+            <div class="p-6 md:p-8">
+                <!-- Syllabus Section -->
+                <div id="syllabus-content" class="space-y-6">
+                    <!-- Javascript will inject accordions here -->
                 </div>
-                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
-                    <div class="bg-green-100 p-3 rounded-full"><svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z"></path></svg></div>
-                    <div><h4 class="text-sm font-medium text-gray-500">Subjects Mastered</h4><p id="metric-subjects-mastered" class="text-2xl font-bold mt-1">0</p></div>
-                </div>
-                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
-                     <div class="bg-blue-100 p-3 rounded-full"><svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg></div>
-                    <div><h4 class="text-sm font-medium text-gray-500">Topics Completed</h4><p id="metric-topics-completed" class="text-2xl font-bold mt-1">0</p></div>
-                </div>
-                <div class="card p-5 rounded-xl shadow-lg flex items-center space-x-4">
-                    <div class="bg-purple-100 p-3 rounded-full"><svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5V4H4zm0 0L2 2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2M15 4v5h5V4h-5zm0 0l-2-2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2"></path></svg></div>
-                    <div><h4 class="text-sm font-medium text-gray-500">Total Revisions</h4><p id="metric-revisions-done" class="text-2xl font-bold mt-1">0</p></div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="card p-6 rounded-xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-center mb-4">Subject Strengths</h3>
-                    <div class="relative h-80 md:h-auto">
-                        <canvas id="radarChart"></canvas>
+
+                <!-- Dashboard Section -->
+                <div id="dashboard-content" class="hidden space-y-8">
+                    <!-- KPI Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <p class="text-sm font-medium text-slate-500">Syllabus Coverage</p>
+                            <h4 id="metric-total-completion" class="text-3xl font-display font-bold text-slate-800 mt-1">0%</h4>
+                        </div>
+                        <div class="bg-white rounded-2xl p-5 border border-brand-100 shadow-sm hover:shadow-md transition-shadow bg-brand-50/30">
+                            <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            </div>
+                            <p class="text-sm font-medium text-brand-700">Projected Score</p>
+                            <div class="flex items-baseline gap-1 mt-1">
+                                <h4 id="metric-projected-score" class="text-3xl font-display font-bold text-brand-700">0</h4>
+                                <span class="text-sm font-semibold text-brand-600/70">/ 100</span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                            </div>
+                            <p class="text-sm font-medium text-slate-500">Topics Mastered</p>
+                            <h4 id="metric-topics-completed" class="text-3xl font-display font-bold text-slate-800 mt-1">0</h4>
+                        </div>
+                        <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center mb-4">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5V4H4zm0 0L2 2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2M15 4v5h5V4h-5zm0 0l-2-2m2 2l2-2m0 12v5h5v-5h-5zm0 0l-2 2m2-2l2 2" /></svg>
+                            </div>
+                            <p class="text-sm font-medium text-slate-500">Total Revisions</p>
+                            <h4 id="metric-revisions-done" class="text-3xl font-display font-bold text-slate-800 mt-1">0</h4>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                            <h3 class="text-lg font-display font-bold text-slate-800 mb-6">Subject Strengths</h3>
+                            <div class="relative h-[300px] w-full">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-display font-bold text-slate-800">Phase Bottlenecks</h3>
+                                <span class="text-xs font-semibold px-2 py-1 bg-slate-100 text-slate-500 rounded-md">Stacked View</span>
+                            </div>
+                            <div class="relative h-[300px] w-full">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="card p-6 rounded-xl shadow-lg">
-                    <h3 class="text-lg font-semibold text-center mb-4">Subject Progress</h3>
-                    <div class="relative h-96 md:h-auto">
-                        <canvas id="barChart"></canvas>
+
+                <!-- Marks Distribution Section -->
+                <div id="marks-content" class="hidden space-y-6">
+                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
+                        <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-xl md:text-2xl font-display font-bold text-slate-800">Historical Marks Distribution</h2>
+                                <p class="text-slate-500 text-sm mt-1">Based on GATE CSE papers (2010 - 2025). Core subjects only (85 Marks).</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200/50">
+                                    <button id="toggle-average" class="px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200">
+                                        Average
+                                    </button>
+                                    <button id="toggle-median" class="px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200">
+                                        Median
+                                    </button>
+                                </div>
+                                <div class="hidden sm:flex bg-slate-50 text-slate-600 px-4 py-2 rounded-xl text-sm font-bold border border-slate-100 items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>
+                                    Ranked
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[500px]">
+                                <thead>
+                                    <tr class="border-b-2 border-slate-200 text-sm font-semibold text-slate-500">
+                                        <th class="pb-3 pl-2">Subject</th>
+                                        <th class="pb-3 text-right pr-4 w-24">Weightage</th>
+                                        <th class="pb-3 w-1/2">Proportion</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="marks-table-body">
+                                    <!-- Javascript will inject table rows here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- NEW: Deep Insights & Trend Analytics -->
+                    <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm mt-6 animate-slide-up" style="animation-delay: 100ms;">
+                        <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <h2 class="text-xl md:text-2xl font-display font-bold text-slate-800">Deep Dive: Subject Trends</h2>
+                                <p class="text-slate-500 text-sm mt-1">Analyze how the weightage of each subject has shifted over the last 11 exams.</p>
+                            </div>
+                            <div class="relative w-full md:w-64">
+                                <select id="trend-subject-select" class="w-full appearance-none bg-slate-50 border border-slate-200 text-slate-700 font-semibold py-2.5 px-4 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors cursor-pointer">
+                                    <!-- Options injected via JS -->
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Insight Metric Cards -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Highest Marks</p>
+                                <h4 id="insight-max" class="text-2xl font-display font-bold text-brand-600">0</h4>
+                            </div>
+                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Lowest Marks</p>
+                                <h4 id="insight-min" class="text-2xl font-display font-bold text-rose-500">0</h4>
+                            </div>
+                            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Volatility</p>
+                                <h4 id="insight-volatility" class="text-lg md:text-xl font-display font-bold text-slate-700">Stable</h4>
+                            </div>
+                        </div>
+
+                        <div class="relative h-[300px] w-full mt-4">
+                            <canvas id="trendLineChart"></canvas>
+                        </div>
                     </div>
                 </div>
+
             </div>
-        </div>
-        
-        <div id="reset-container" class="mt-12 text-center hidden">
-            <button id="reset-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg shadow transition-transform transform hover:scale-105">
-                Reset All Progress
-            </button>
-            <button id="logout-btn" class="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg ml-2 transition-transform transform hover:scale-105">Sign Out</button>
+        </main>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- 1. Reset Modal -->
+    <div id="reset-modal" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300" id="reset-modal-content">
+            <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <h3 class="text-2xl font-display font-bold text-center text-slate-800 mb-2">Reset Progress?</h3>
+            <p class="text-center text-slate-500 mb-8 leading-relaxed">This will permanently erase all your checked topics. This action cannot be undone.</p>
+            <div class="flex flex-col gap-3">
+                <button id="confirm-reset" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-semibold py-3 rounded-xl transition-colors shadow-sm">Yes, Reset Everything</button>
+                <button id="cancel-reset" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-colors">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div id="reset-modal" class="modal-overlay hidden">
-        <div class="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm mx-4">
-            <h3 class="text-xl font-bold mb-4">Are you sure?</h3>
-            <p class="text-gray-600 mb-6">This will permanently delete all your tracked progress. This action cannot be undone.</p>
-            <div class="flex justify-center space-x-4">
-                <button id="cancel-reset" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg">Cancel</button>
-                <button id="confirm-reset" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg">Confirm</button>
+    <!-- 2. Guide Modal -->
+    <div id="guide-modal" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-xl w-full mx-4 shadow-2xl transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto" id="guide-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <h3 class="text-2xl font-display font-bold text-slate-800">Preparation Guide</h3>
+                </div>
+                <button id="close-guide" class="text-slate-400 hover:text-slate-600 transition-colors bg-slate-100 hover:bg-slate-200 p-2 rounded-full">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
             </div>
+            
+            <div class="text-slate-600 space-y-4 text-sm md:text-base leading-relaxed">
+                <p>This tracker uses scientifically proven <strong>spaced repetition</strong> to help you master the GATE syllabus systematically. Check off each block as you progress:</p>
+                
+                <ul class="space-y-4 mt-6">
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-slate-600 flex items-center justify-center shadow-sm">N</span> 
+                        <div><strong class="text-slate-800">Notes & Concepts:</strong> Watch lectures, read standard textbooks, and prepare your comprehensive short notes.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R1</span> 
+                        <div><strong class="text-slate-800">First Revision:</strong> Revise your notes within 24 hours of completing the original topic.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-purple-600 flex items-center justify-center shadow-sm">TT</span> 
+                        <div><strong class="text-slate-800">Topic Test:</strong> Solve standard textbook exercises, coaching workbook questions, or topic-wise tests related to the topic.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-orange-500 flex items-center justify-center shadow-sm">P1</span> 
+                        <div><strong class="text-slate-800">PYQ Iteration 1:</strong> Solve Previous Year Questions (last 15-20 years). Mark the difficult questions.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R2</span> 
+                        <div><strong class="text-slate-800">Second Revision:</strong> Revisit notes and your marked difficult questions after 1-2 weeks.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-orange-500 flex items-center justify-center shadow-sm">P2</span> 
+                        <div><strong class="text-slate-800">PYQ Iteration 2:</strong> Re-solve the PYQs, strictly focusing on the ones you couldn't solve in P1.</div>
+                    </li>
+                    <li class="flex gap-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="flex-shrink-0 w-10 h-10 bg-white rounded-lg border border-slate-200 font-bold text-brand-600 flex items-center justify-center shadow-sm">R3</span> 
+                        <div><strong class="text-slate-800">Final Sweep Revision:</strong> Quick review after 1 month, or immediately prior to attempting subject-wise mock tests.</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <button id="got-it-btn" class="mt-8 w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl transition-colors shadow-sm text-lg">Let's Get Started</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         
-        // --- FIREBASE CONFIG ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBVUTqPzWbMEzzdWbdQUY806SadUWvmUz8",
-            authDomain: "gate-tracker-a561f.firebaseapp.com",
-            projectId: "gate-tracker-a561f",
-            storageBucket: "gate-tracker-a561f.firebasestorage.app",
-            messagingSenderId: "322542809047",
-            appId: "1:322542809047:web:86e719394ca02b6ef32592",
-            measurementId: "G-2MBR978R7G"
-        };
+        // --- SECURE FIREBASE CONFIGURATION (Environment Adaptable) ---
+        const defaultAppId = 'gate-tracker-app';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : defaultAppId;
         
-        // Initialize Firebase
+        let firebaseConfig;
+        if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            firebaseConfig = {
+                apiKey: "", 
+                authDomain: "gate-tracker-a561f.firebaseapp.com",
+                projectId: "gate-tracker-a561f",
+                storageBucket: "gate-tracker-a561f.firebasestorage.app",
+                messagingSenderId: "322542809047",
+                appId: "1:322542809047:web:86e719394ca02b6ef32592"
+            };
+        }
+        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -269,80 +473,114 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const syllabus = {
-                "Computer Networks": {
-                    "Topics": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCPStack /Protocol"]
-                },
-                "Operating Systems": {
-                    "Topics": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"]
-                },
-                "C-Programming": {
-                    "Topics": ["Data Types & Operators", "Control Flow Statements", "Functions & Storage Classes", "Arrays & Pointers", "Strings", "Structures & Union", "Miscellaneous"]
-                },
-                "Data Structures": {
-                    "Topics": ["Introduction", "Arrays", "Linked List", "Stack & Queues", "Trees", "Graphs", "Hashing"]
-                },
-                "Digital Logic": {
-                    "Topics": ["Logic Gates", "Minimization", "Combinational Circuit", "Sequential Circuit", "Number System"]
-                },
-                "Theory of Computation": {
-                    "Topics": ["Finite Automata", "Push down Automata", "Turing Machine", "Decidability"]
-                },
-                "Compiler Design": {
-                    "Topics": ["Lexical & Syntax Analysis", "Syntax Directed Translation", "Intermediate Code & Optimization"]
-                },
-                "Algorithms": {
-                    "Topics": ["Analysis Of Algorithms", "Design Strategies", "Greedy Method", "Dynamic Programming", "Graph Algorithms", "Heap Algorithms", "Backtracking - Branch & Bound"]
-                },
-                "Database Management System": {
-                    "Topics": ["FD's and Normalisation", "Transaction & Concurrency", "ER Model", "Query Language", "File Organisation & Indexing"]
-                },
-                "Computer Organisation & Architecture": {
-                    "Topics": ["Introduction", "Machine Instruction & Addressing", "Floating Point Representation", "ALU and Control Unit", "Instruction And Pipelining", "Cache Memory", "Secondary Memory & IO"]
-                },
-                "Discrete Mathematics": {
-                    "Topics": ["Graph Theory", "Mathematical Logic", "Set Theory", "Combinatorics"]
-                },
-                "Engineering Mathematics": {
-                    "Topics": ["Linear Algebra", "Calculus", "Probability & Statistics"]
-                }
+                "Computer Networks": ["IPV4 Addressing", "Error Control", "Flow Control", "IPV4 Header & Fragmentation", "TCP & UDP", "Medium Access Control", "Routing Protocols", "Switching", "Application Layer Protocols", "IP Support protocol", "OSI & TCP Stack"],
+                "Operating Systems": ["Introduction & Background", "Process Management", "CPU Scheduling", "Process Synchronization", "DeadLock", "Memory Management", "File Sys & Device Management", "System Calls & Threads"],
+                "C-Programming": ["Data Types & Operators", "Control Flow Statements", "Functions & Storage Classes", "Arrays & Pointers", "Strings", "Structures & Union", "Miscellaneous"],
+                "Data Structures": ["Introduction", "Arrays", "Linked List", "Stack & Queues", "Trees", "Graphs", "Hashing"],
+                "Digital Logic": ["Logic Gates", "Minimization", "Combinational Circuit", "Sequential Circuit", "Number System"],
+                "Theory of Computation": ["Finite Automata", "Push down Automata", "Turing Machine", "Decidability"],
+                "Compiler Design": ["Lexical & Syntax Analysis", "Syntax Directed Translation", "Intermediate Code & Optimization"],
+                "Algorithms": ["Analysis Of Algorithms", "Design Strategies", "Greedy Method", "Dynamic Programming", "Graph Algorithms", "Heap Algorithms", "Backtracking & Branch Bound"],
+                "DBMS": ["FD's and Normalisation", "Transaction & Concurrency", "ER Model", "Query Language", "File Organisation & Indexing"],
+                "Computer Architecture": ["Introduction", "Machine Instruction & Addressing", "Floating Point Representation", "ALU and Control Unit", "Instruction And Pipelining", "Cache Memory", "Secondary Memory & IO"],
+                "Discrete Mathematics": ["Graph Theory", "Mathematical Logic", "Set Theory", "Combinatorics"],
+                "Engineering Mathematics": ["Linear Algebra", "Calculus", "Probability & Statistics"],
+                "General Aptitude": ["Verbal Aptitude", "Quantitative Aptitude", "Analytical Aptitude", "Spatial Aptitude"]
             };
             
+            // Short forms mapping for Charts
+            const subjectAbbreviations = {
+                "Computer Networks": "CN",
+                "Operating Systems": "OS",
+                "C-Programming": "C Prog",
+                "Data Structures": "DS",
+                "Digital Logic": "DL",
+                "Theory of Computation": "TOC",
+                "Compiler Design": "CD",
+                "Algorithms": "Algo",
+                "DBMS": "DBMS",
+                "Computer Architecture": "COA",
+                "Discrete Mathematics": "DM",
+                "Engineering Mathematics": "EM",
+                "General Aptitude": "GA"
+            };
+            
+            // --- NEW: Precision Weightages based on GATE Overflow Data (2010-2025) ---
+            // Averages derived from 25 papers and normalized strictly to 85 Technical Marks
+            const subjectWeightages = {
+                "Computer Networks": 7.9,
+                "Operating Systems": 8.7,
+                "C-Programming": 4.4,
+                "Data Structures": 4.5,
+                "Digital Logic": 6.2,
+                "Theory of Computation": 7.7,
+                "Compiler Design": 5.6,
+                "Algorithms": 9.2,
+                "DBMS": 7.2,
+                "Computer Architecture": 7.0,
+                "Discrete Mathematics": 9.2,
+                "Engineering Mathematics": 7.4,
+                "General Aptitude": 15.0
+            };
+
+            // Median values derived from the same historical dataset
+            const subjectMedians = {
+                "Computer Networks": 8.0,
+                "Operating Systems": 9.0,
+                "C-Programming": 4.0,
+                "Data Structures": 5.0,
+                "Digital Logic": 6.0,
+                "Theory of Computation": 8.0,
+                "Compiler Design": 6.0,
+                "Algorithms": 9.0,
+                "DBMS": 8.0,
+                "Computer Architecture": 7.0,
+                "Discrete Mathematics": 9.0,
+                "Engineering Mathematics": 6.0,
+                "General Aptitude": 15.0
+            };
+            
+            // --- NEW: Historical Exam-by-Exam Trend Data (Last 11 Exams: 2018 to 2025-2) ---
+            const trendLabels = ['2018', '2019', '2020', '2021-1', '2021-2', '2022', '2023', '2024-1', '2024-2', '2025-1', '2025-2'];
+            const trendData = {
+                "Computer Networks": [7, 9, 6, 9, 7, 10, 8, 9, 9, 8, 6],
+                "Operating Systems": [9, 10, 10, 6, 8, 10, 9, 10, 10, 8, 7],
+                "C-Programming": [8, 8, 3, 4, 6, 5, 1, 4, 4, 5, 6],
+                "Data Structures": [2, 4, 7, 6, 2, 4, 8, 2, 4, 5, 6],
+                "Digital Logic": [6, 8, 6, 6, 7, 5, 6, 6, 6, 6, 9],
+                "Theory of Computation": [8, 8, 9, 8, 11, 8, 9, 5, 7, 10, 7],
+                "Compiler Design": [5, 6, 4, 7, 6, 4, 7, 10, 8, 6, 6],
+                "Algorithms": [8, 6, 8, 9, 10, 6, 6, 9, 6, 8, 8],
+                "DBMS": [6, 8, 8, 8, 7, 7, 5, 8, 8, 8, 9],
+                "Computer Architecture": [8, 4, 9, 5, 6, 7, 10, 8, 8, 8, 9],
+                "Discrete Mathematics": [11, 8, 8, 9, 6, 13, 10, 6, 9, 6, 3],
+                "Engineering Mathematics": [7, 8, 5, 8, 9, 6, 6, 8, 6, 7, 9],
+                "General Aptitude": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
+            };
+
+            let currentMarksMetric = 'average';
+            let trendLineChart;
+            
             const columns = [
-                { label: 'Notes', id: 'notes' },
-                { label: 'R1', id: 'r1' },
-                { label: 'R2', id: 'r2' },
-                { label: 'R3', id: 'r3' },
-                { label: 'DPP', id: 'dpp' },
-                { label: 'PYQ', id: 'pyq1' },
-                { label: 'PYQ', id: 'pyq2' }
+                { label: 'N', tooltip: 'Notes', id: 'notes' },
+                { label: 'R1', tooltip: 'Revision 1', id: 'r1' },
+                { label: 'R2', tooltip: 'Revision 2', id: 'r2' },
+                { label: 'R3', tooltip: 'Revision 3', id: 'r3' },
+                { label: 'TT', tooltip: 'Topic Test', id: 'tt' },
+                { label: 'P1', tooltip: 'PYQ Set 1', id: 'pyq1' },
+                { label: 'P2', tooltip: 'PYQ Set 2', id: 'pyq2' }
             ];
             
-            const subjectColors = [
-                'rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
-                'rgba(199, 199, 199, 0.6)', 'rgba(83, 102, 255, 0.6)', 'rgba(10, 207, 131, 0.6)',
-                'rgba(245, 69, 151, 0.6)', 'rgba(255, 99, 71, 0.6)', 'rgba(60, 179, 113, 0.6)'
-            ];
-
-            const container = document.getElementById('syllabus-container');
-            const overallProgressBar = document.getElementById('overall-progress');
-            const overallProgressTextBg = document.getElementById('overall-progress-text-bg');
-            const overallProgressTextFg = document.getElementById('overall-progress-text-fg');
+            const container = document.getElementById('syllabus-content');
             let totalCheckboxes = 0;
             let checkboxStates = {};
             let radarChart, barChart;
             let unsubscribe;
             let currentUser = null;
             const subjectCompletionState = {};
+            const LOCAL_STORAGE_KEY = 'gateTrackerState_offline';
 
-            const authScreen = document.getElementById('auth-screen');
-            const initialLoader = document.getElementById('initial-loader');
-            const authCard = document.getElementById('auth-card');
-            const appContainer = document.getElementById('app-container');
-            const loginBtn = document.getElementById('login-btn');
-            const userProfileContainer = document.getElementById('user-profile');
-            const resetContainer = document.getElementById('reset-container');
-
+            // Generate Modern UI
             function generateSyllabusHTML() {
                  let delay = 0;
                 for (const subject in syllabus) {
@@ -350,334 +588,696 @@
                     subjectCompletionState[subjectId] = false;
                     
                     const detailsElement = document.createElement('details');
-                    detailsElement.className = 'bg-white rounded-xl shadow-lg overflow-hidden';
+                    detailsElement.className = 'group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden';
                     detailsElement.style.animationDelay = `${delay}ms`;
                     delay += 50;
                     
                     let subjectHTML = `
-                        <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center bg-gray-50 border-b border-gray-200 gap-4">
-                            <div class="flex items-center space-x-2 self-start md:self-center">
-                                <span id="icon-${subjectId}" class="completion-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.705L7.7 11.292l2.299 2.295 5.294-5.294 1.414 1.414-6.706 6.706z"></path></svg>
-                                </span>
-                                <h2 class="text-xl font-semibold text-gray-800">${subject}</h2>
-                            </div>
-                            <div class="w-full md:w-auto flex items-center space-x-4">
-                                <div class="relative flex-grow h-5 w-full md:w-48">
-                                    <div class="absolute inset-0 bg-gray-200 rounded-full flex justify-center items-center">
-                                        <span id="progress-text-bg-${subjectId}" class="text-gray-700 text-xs font-semibold">0%</span>
-                                    </div>
-                                    <div id="progress-${subjectId}" class="absolute inset-0 progress-bar-fg rounded-full flex justify-center items-center overflow-hidden" style="width: 0%;">
-                                        <span id="progress-text-fg-${subjectId}" class="text-white text-xs font-semibold">0%</span>
-                                    </div>
+                        <summary class="p-5 cursor-pointer flex flex-col md:flex-row justify-between items-center gap-4 select-none relative z-10 bg-white">
+                            <div class="flex items-center space-x-4 w-full md:w-auto">
+                                <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 transition-colors group-hover:bg-brand-100 shrink-0">
+                                    <svg id="icon-${subjectId}" class="w-5 h-5 opacity-0 scale-50 transition-all duration-300 absolute text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <svg class="w-5 h-5 folder-icon transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
                                 </div>
-                                <span class="arrow text-gray-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </span>
+                                <h2 class="text-lg font-display font-bold text-slate-800 flex-1">${subject}</h2>
+                            </div>
+                            
+                            <div class="w-full md:w-[300px] flex items-center space-x-4">
+                                <div class="flex-grow h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200 inset-shadow">
+                                    <div id="progress-${subjectId}" class="h-full bg-brand-500 progress-bar-fill rounded-full" style="width: 0%;"></div>
+                                </div>
+                                <span id="progress-text-${subjectId}" class="text-sm font-bold text-slate-600 w-10 text-right">0%</span>
+                                <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-slate-400 arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
                             </div>
                         </summary>
-                        <div class="p-2 md:p-5 overflow-x-auto">
-                            <table class="w-full text-left responsive-table">
-                                <thead>
-                                    <tr class="border-b">
-                                        <th class="py-2 px-2 font-semibold">Chapter</th>
-                                        ${columns.map(col => `<th class="w-12 text-center py-2 font-semibold">${col.label}</th>`).join('')}
-                                    </tr>
-                                </thead>
-                                <tbody>
+                        
+                        <div class="details-content bg-slate-50/50">
+                            <div class="details-inner p-2 md:p-5 border-t border-slate-100">
+                                <div class="space-y-2">
                     `;
 
-                    for (const subtopic in syllabus[subject]) {
-                        syllabus[subject][subtopic].forEach((item, index) => {
-                            const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
-                            totalCheckboxes += columns.length;
-                            subjectHTML += `
-                                <tr>
-                                    <td class="py-3 px-2 text-gray-600 topic-cell">${item}</td>
+                    syllabus[subject].forEach((item, index) => {
+                        const itemId = `${subjectId}-${item.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${index}`;
+                        totalCheckboxes += columns.length;
+                        
+                        subjectHTML += `
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-brand-300 transition-colors">
+                                <span class="text-sm font-semibold text-slate-700 md:w-1/3 leading-snug">${item}</span>
+                                <div class="flex flex-wrap md:flex-nowrap gap-2 md:gap-3 shrink-0">
                                     ${columns.map(col => `
-                                        <td class="w-12 text-center" data-label="${col.label}">
-                                            <input type="checkbox" class="custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
-                                        </td>
+                                        <label class="pill-checkbox cursor-pointer" title="${col.tooltip}">
+                                            <input type="checkbox" class="hidden custom-checkbox" id="${itemId}-${col.id}" data-subject="${subjectId}">
+                                            <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-100 border border-slate-200 transition-all duration-200 hover:bg-slate-200 select-none">
+                                                ${col.label}
+                                            </div>
+                                        </label>
                                     `).join('')}
-                                </tr>
-                            `;
-                        });
-                    }
+                                </div>
+                            </div>
+                        `;
+                    });
 
-                    subjectHTML += `</tbody></table></div>`;
+                    subjectHTML += `</div></div></div>`;
                     detailsElement.innerHTML = subjectHTML;
                     container.appendChild(detailsElement);
                 }
             }
 
-            function initCharts() {
-                const fontColor = '#1f2937';
-                const gridColor = 'rgba(0, 0, 0, 0.1)';
+            // Generate Marks Distribution Table
+            function generateMarksTable() {
+                const tbody = document.getElementById('marks-table-body');
+                const sourceData = currentMarksMetric === 'average' ? subjectWeightages : subjectMedians;
+                
+                // Sort subjects by weightage in descending order, excluding General Aptitude
+                const sortedSubjects = Object.entries(sourceData)
+                    .filter(([subject]) => subject !== "General Aptitude")
+                    .sort((a, b) => b[1] - a[1]);
 
-                const chartLabels = Object.keys(syllabus).map(s => {
-                    const abbreviations = {
-                        "Computer Networks": "CN",
-                        "Operating Systems": "OS",
-                        "Data Structures": "DS",
-                        "Digital Logic": "DSD",
-                        "Theory of Computation": "TOC",
-                        "Compiler Design": "CD",
-                        "Algorithms": "Algo",
-                        "Computer Organisation & Architecture": "COA",
-                        "Discrete Mathematics": "DM",
-                        "Engineering Mathematics": "EM",
-                        "Database Management System": "DBMS",
-                        "C-Programming": "C Prog"
-                    };
-                    return abbreviations[s] || s;
+                let html = '';
+                // Dynamically set maxWeight to the highest core subject to scale bars effectively
+                const maxWeight = Math.max(...sortedSubjects.map(s => s[1])); 
+                // Fix: brand-400 didn't exist in config, using brand-500 and brand-600 instead
+                const barColorClass = currentMarksMetric === 'average' ? 'from-brand-500 to-brand-600' : 'from-purple-400 to-purple-500';
+
+                sortedSubjects.forEach(([subject, weight]) => {
+                    const widthPercent = (weight / maxWeight) * 100;
+                    html += `
+                        <tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors group">
+                            <td class="py-4 pl-2 font-medium text-slate-700 group-hover:text-brand-600 transition-colors">${subject}</td>
+                            <td class="py-4 text-right pr-4 font-bold text-slate-800">${weight.toFixed(1)}</td>
+                            <td class="py-4 w-1/2 pr-2">
+                                <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                                    <div class="h-full bg-gradient-to-r ${barColorClass} rounded-full shadow-sm transition-all duration-500 ease-out" style="width: ${widthPercent}%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
                 });
+                tbody.innerHTML = html;
+            }
+
+            // Initialize Trend Dropdown and Insights
+            function initTrendAnalytics() {
+                const select = document.getElementById('trend-subject-select');
+                let optionsHtml = '';
+                Object.keys(subjectAbbreviations).forEach(subj => {
+                    if (subj !== "General Aptitude") {
+                        optionsHtml += `<option value="${subj}">${subj}</option>`;
+                    }
+                });
+                select.innerHTML = optionsHtml;
+
+                // Default selection
+                select.value = "Algorithms";
+                updateTrendChart("Algorithms");
+
+                select.addEventListener('change', (e) => {
+                    updateTrendChart(e.target.value);
+                });
+            }
+
+            function updateTrendChart(subject) {
+                const data = trendData[subject];
+                
+                // Calculate Insights
+                const max = Math.max(...data);
+                const min = Math.min(...data);
+                const diff = max - min;
+                
+                let volatilityText = "Stable";
+                if (diff === 0) volatilityText = "Constant";
+                else if (diff <= 2) volatilityText = "Low";
+                else if (diff <= 5) volatilityText = "Moderate";
+                else volatilityText = "High / Unpredictable";
+
+                document.getElementById('insight-max').textContent = max;
+                document.getElementById('insight-min').textContent = min;
+                document.getElementById('insight-volatility').textContent = volatilityText;
+
+                // Update Chart
+                if (trendLineChart) {
+                    trendLineChart.data.datasets[0].data = data;
+                    trendLineChart.data.datasets[0].label = `${subject} Marks Trend`;
+                    trendLineChart.update();
+                }
+            }
+
+            function initCharts() {
+                // Use the Abbreviations map created earlier
+                const chartLabels = Object.keys(syllabus).map(s => subjectAbbreviations[s] || s);
+                const brandColor = 'rgba(99, 102, 241, 1)'; // brand-500
+                const brandBg = 'rgba(99, 102, 241, 0.2)';
+
+                Chart.defaults.font.family = "'Inter', sans-serif";
+                Chart.defaults.color = '#64748b';
 
                 const radarCtx = document.getElementById('radarChart').getContext('2d');
                 radarChart = new Chart(radarCtx, {
                     type: 'radar',
-                    data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: 'rgba(79, 70, 229, 0.2)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(79, 70, 229, 1)' }] },
+                    data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: brandBg, borderColor: brandColor, borderWidth: 2, pointBackgroundColor: brandColor, pointBorderColor: '#fff', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: brandColor, fill: true }] },
                     options: { 
                         responsive: true, maintainAspectRatio: false, 
                         scales: { 
                             r: { 
                                 beginAtZero: true, max: 100, 
-                                ticks: { stepSize: 20, backdropColor: 'transparent', color: fontColor },
-                                pointLabels: { color: fontColor, font: { size: 12, weight: '500' } },
-                                grid: { color: gridColor }
+                                ticks: { stepSize: 25, display: false },
+                                pointLabels: { font: { size: 12, family: "'Outfit', sans-serif", weight: '700' }, color: '#475569' },
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                                angleLines: { color: 'rgba(0, 0, 0, 0.05)' }
                             } 
                         }, 
-                        plugins: { legend: { display: false } } 
+                        plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', padding: 12, cornerRadius: 8, displayColors: false, callbacks: { label: (ctx) => `${ctx.raw}% Completed` } } } 
                     }
                 });
 
                 const barCtx = document.getElementById('barChart').getContext('2d');
                 barChart = new Chart(barCtx, {
                     type: 'bar',
-                    data: { labels: chartLabels, datasets: [{ data: [], backgroundColor: subjectColors, borderColor: subjectColors.map(c => c.replace('0.6', '1')), borderWidth: 1 }] },
+                    data: { 
+                        labels: chartLabels, 
+                        datasets: [
+                            { label: 'Notes', data: [], backgroundColor: 'rgba(59, 130, 246, 0.9)', borderRadius: 4 },
+                            { label: 'Practice', data: [], backgroundColor: 'rgba(249, 115, 22, 0.9)', borderRadius: 4 },
+                            { label: 'Revision', data: [], backgroundColor: 'rgba(16, 185, 129, 0.9)', borderRadius: 4 }
+                        ] 
+                    },
                     options: { 
-                        responsive: true, maintainAspectRatio: false, indexAxis: 'y', 
+                        responsive: true, maintainAspectRatio: false, 
                         scales: { 
-                            x: { beginAtZero: true, max: 100, ticks: { color: fontColor }, grid: { color: gridColor } },
-                            y: { ticks: { color: fontColor, font: { weight: '500' } }, grid: { color: 'transparent' } }
+                            x: { stacked: true, grid: { display: false, drawBorder: false }, ticks: { font: { size: 11, weight: '600' }, color: '#475569', maxRotation: 45, minRotation: 45 } },
+                            y: { stacked: true, beginAtZero: true, max: 100, grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false }, ticks: { font: { size: 12, weight: '600' }, color: '#475569', stepSize: 25, callback: (val) => val + '%' } }
                         }, 
-                        plugins: { legend: { display: false } } 
+                        plugins: { 
+                            legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: { family: "'Inter', sans-serif", size: 11, weight: '500' } } }, 
+                            tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', padding: 12, cornerRadius: 8, callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } } 
+                        } 
+                    }
+                });
+                
+                // NEW: Trend Line Chart
+                const trendCtx = document.getElementById('trendLineChart').getContext('2d');
+                
+                // Create gradient for the line chart fill
+                const gradientFill = trendCtx.createLinearGradient(0, 0, 0, 300);
+                gradientFill.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); // brand-500 transparent
+                gradientFill.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+                trendLineChart = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: trendLabels,
+                        datasets: [{
+                            label: 'Marks Trend',
+                            data: [], // Injected via updateTrendChart
+                            borderColor: 'rgba(99, 102, 241, 1)',
+                            backgroundColor: gradientFill,
+                            borderWidth: 3,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: 'rgba(99, 102, 241, 1)',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.4 // Smooth curves
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 11, weight: '500' }, color: '#64748b' } },
+                            y: { 
+                                beginAtZero: true, 
+                                suggestedMax: 15,
+                                grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false }, 
+                                ticks: { font: { size: 12, weight: '600' }, color: '#64748b', stepSize: 3 } 
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                                titleFont: { size: 13, family: "'Inter', sans-serif" },
+                                bodyFont: { size: 14, weight: 'bold' },
+                                padding: 12,
+                                cornerRadius: 8,
+                                displayColors: false,
+                                callbacks: { label: (ctx) => `${ctx.raw} Marks` }
+                            }
+                        }
                     }
                 });
             }
 
-            function updateDashboardMetrics(subjectPercentages, totalPercentage) {
-                document.getElementById('metric-total-completion').textContent = `${totalPercentage}%`;
-                const subjectsMastered = subjectPercentages.filter(p => p === 100).length;
-                document.getElementById('metric-subjects-mastered').textContent = `${subjectsMastered} / ${Object.keys(syllabus).length}`;
-                let revisionsDone = 0;
-                for (const id in checkboxStates) {
-                    if (checkboxStates[id] && (id.includes('-r1') || id.includes('-r2') || id.includes('-r3'))) {
-                        revisionsDone++;
-                    }
-                }
-                let completedTopicCount = 0;
-                for (const subject in syllabus) {
-                    for(const sub in syllabus[subject]){
-                        syllabus[subject][sub].forEach((item, index) => {
-                            const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
-                            const itemId = `${subjectId}-${item.replace(/\s+/g, '-').toLowerCase()}-${index}`;
-                            let allChecked = true;
-                            columns.forEach(col => {
-                                if (!checkboxStates[`${itemId}-${col.id}`]) allChecked = false;
-                            });
-                            if (allChecked) completedTopicCount++;
-                        });
-                    }
-                }
-                document.getElementById('metric-topics-completed').textContent = `${completedTopicCount}`;
-                document.getElementById('metric-revisions-done').textContent = revisionsDone;
-            }
-
-            function updateCharts(subjectPercentages) {
-                radarChart.data.datasets[0].data = subjectPercentages;
-                barChart.data.datasets[0].data = subjectPercentages;
-                radarChart.update();
-                barChart.update();
-            }
-
-            function updateProgress() {
+            function updateMetricsAndCharts() {
                 const subjectProgress = {};
                 const subjectTotals = {};
+                const subjectPhaseProgress = {}; // NEW
+                
                 for (const subject in syllabus) {
                     const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
                     subjectProgress[subjectId] = 0;
-                    subjectTotals[subjectId] = 0;
-                    for (const subtopic in syllabus[subject]) {
-                        subjectTotals[subjectId] += syllabus[subject][subtopic].length * columns.length;
-                    }
+                    subjectTotals[subjectId] = syllabus[subject].length * columns.length;
+                    subjectPhaseProgress[subjectId] = { notes: 0, practice: 0, revision: 0 };
                 }
 
                 let totalChecked = 0;
-                for (const id in checkboxStates) {
-                    if (checkboxStates[id]) {
+                let revisionsDone = 0;
+                let completedTopicCount = 0;
+
+                // Process DOM Checkboxes for State calculation
+                const allCheckboxes = document.querySelectorAll('.custom-checkbox');
+                const topicCompletionMap = {};
+
+                allCheckboxes.forEach(cb => {
+                    const isChecked = checkboxStates[cb.id] || false;
+                    cb.checked = isChecked; // sync DOM
+                    
+                    if (isChecked) {
                         totalChecked++;
-                        const checkbox = document.getElementById(id);
-                        if(checkbox) {
-                            const subjectId = checkbox.dataset.subject;
-                            if (subjectId && subjectProgress.hasOwnProperty(subjectId)) subjectProgress[subjectId]++;
+                        const subjectId = cb.dataset.subject;
+                        if (subjectId) {
+                            subjectProgress[subjectId]++;
+                            
+                            // Phase Progress Tracking
+                            if (cb.id.includes('-notes')) {
+                                subjectPhaseProgress[subjectId].notes++;
+                            } else if (cb.id.includes('-tt') || cb.id.includes('-pyq1') || cb.id.includes('-pyq2')) {
+                                subjectPhaseProgress[subjectId].practice++;
+                            } else if (cb.id.includes('-r1') || cb.id.includes('-r2') || cb.id.includes('-r3')) {
+                                subjectPhaseProgress[subjectId].revision++;
+                                revisionsDone++;
+                            }
                         }
                     }
-                }
-                
-                const subjectPercentages = [];
-                for (const subjectId in subjectProgress) {
-                    const progressBar = document.getElementById(`progress-${subjectId}`);
-                    const progressTextBg = document.getElementById(`progress-text-bg-${subjectId}`);
-                    const progressTextFg = document.getElementById(`progress-text-fg-${subjectId}`);
-                    const icon = document.getElementById(`icon-${subjectId}`);
-                    
-                    if (progressBar && progressTextBg && progressTextFg) {
-                        const percentage = subjectTotals[subjectId] > 0 ? Math.round((subjectProgress[subjectId] / subjectTotals[subjectId]) * 100) : 0;
-                        subjectPercentages.push(percentage);
-                        progressBar.style.width = `${percentage}%`;
-                        progressTextBg.textContent = `${percentage}%`;
-                        progressTextFg.textContent = `${percentage}%`;
-                        icon.style.display = percentage === 100 ? 'inline-block' : 'none';
 
-                        if (percentage === 100 && !subjectCompletionState[subjectId]) {
-                            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                            subjectCompletionState[subjectId] = true;
-                        } else if (percentage < 100) {
+                    // Calculate full topic completion
+                    const topicBaseId = cb.id.substring(0, cb.id.lastIndexOf('-'));
+                    if (!topicCompletionMap[topicBaseId]) topicCompletionMap[topicBaseId] = { total: 0, checked: 0 };
+                    topicCompletionMap[topicBaseId].total++;
+                    if (isChecked) topicCompletionMap[topicBaseId].checked++;
+                });
+
+                Object.values(topicCompletionMap).forEach(topic => {
+                    if (topic.checked === topic.total) completedTopicCount++;
+                });
+
+                const subjectPercentages = [];
+                let subjectsMastered = 0;
+                let totalProjectedScore = 0;
+                
+                const notesData = [];
+                const practiceData = [];
+                const revisionData = [];
+
+                for (const subject in syllabus) {
+                    const subjectId = subject.replace(/\s+/g, '-').toLowerCase();
+                    const percentage = subjectTotals[subjectId] > 0 ? Math.round((subjectProgress[subjectId] / subjectTotals[subjectId]) * 100) : 0;
+                    subjectPercentages.push(percentage);
+                    
+                    // Projected Score calculation
+                    const weight = subjectWeightages[subject] || 0;
+                    totalProjectedScore += (percentage / 100) * weight;
+                    
+                    // Stacked Bar Chart Calculations (Normalizing to 100%)
+                    const totalTopics = syllabus[subject].length;
+                    // Weights per topic: 1 note (14.2%), 3 practice (42.8%), 3 revision (42.8%) = 7 items
+                    const nVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].notes / totalTopics) * 14.28) : 0;
+                    const pVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].practice / (totalTopics * 3)) * 42.86) : 0;
+                    const rVal = totalTopics > 0 ? Math.round((subjectPhaseProgress[subjectId].revision / (totalTopics * 3)) * 42.86) : 0;
+                    
+                    notesData.push(nVal);
+                    practiceData.push(pVal);
+                    revisionData.push(rVal);
+                    
+                    // Update DOM
+                    const progressBar = document.getElementById(`progress-${subjectId}`);
+                    const progressText = document.getElementById(`progress-text-${subjectId}`);
+                    const icon = document.getElementById(`icon-${subjectId}`);
+                    const folderIcon = document.querySelector(`#icon-${subjectId} + .folder-icon`);
+                    
+                    if (progressBar && progressText) {
+                        progressBar.style.width = `${percentage}%`;
+                        progressText.textContent = `${percentage}%`;
+                        
+                        if (percentage === 100) {
+                            if (!subjectCompletionState[subjectId]) subjectsMastered++;
+                            icon.classList.remove('opacity-0', 'scale-50');
+                            icon.classList.add('opacity-100', 'scale-100');
+                            folderIcon.classList.add('opacity-0', 'scale-50', 'absolute');
+                            
+                            if (!subjectCompletionState[subjectId]) {
+                                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#6366f1', '#a855f7', '#3b82f6'] });
+                                subjectCompletionState[subjectId] = true;
+                            }
+                        } else {
+                            icon.classList.add('opacity-0', 'scale-50');
+                            icon.classList.remove('opacity-100', 'scale-100');
+                            folderIcon.classList.remove('opacity-0', 'scale-50', 'absolute');
                             subjectCompletionState[subjectId] = false;
                         }
                     }
                 }
+                
+                // Recalculate accurately based on current array rather than potentially stale increments
+                subjectsMastered = subjectPercentages.filter(p => p === 100).length;
 
                 const overallPercentage = totalCheckboxes > 0 ? Math.round((totalChecked / totalCheckboxes) * 100) : 0;
-                overallProgressBar.style.width = `${overallPercentage}%`;
-                overallProgressTextBg.textContent = `${overallPercentage}%`;
-                overallProgressTextFg.textContent = `${overallPercentage}%`;
+                document.getElementById('overall-progress').style.width = `${overallPercentage}%`;
+                document.getElementById('overall-progress-text').textContent = `${overallPercentage}%`;
+                
+                // Dashboard Metrics
+                document.getElementById('metric-total-completion').textContent = `${overallPercentage}%`;
+                // Format projected score to 1 decimal place max (e.g. 45.2)
+                document.getElementById('metric-projected-score').textContent = totalProjectedScore % 1 === 0 ? totalProjectedScore : totalProjectedScore.toFixed(1);
+                document.getElementById('metric-topics-completed').textContent = completedTopicCount;
+                document.getElementById('metric-revisions-done').textContent = revisionsDone;
 
-                updateCharts(subjectPercentages);
-                updateDashboardMetrics(subjectPercentages, overallPercentage);
+                // Update Charts
+                radarChart.data.datasets[0].data = subjectPercentages;
+                barChart.data.datasets[0].data = notesData;
+                barChart.data.datasets[1].data = practiceData;
+                barChart.data.datasets[2].data = revisionData;
+                
+                radarChart.update();
+                barChart.update();
             }
 
+            // Sync interactions to state and Firestore (With Offline Support)
             async function handleCheckboxChange(e) {
-                if (e.target.type === 'checkbox' && currentUser) {
+                if (e.target.classList.contains('custom-checkbox') && currentUser) {
                     const id = e.target.id;
                     checkboxStates[id] = e.target.checked;
-                    updateProgress(); // Optimistic update
-                    const userDocRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userDocRef, { progress: checkboxStates }, { merge: true });
-                }
-            }
-
-            async function resetAllProgress() {
-                if(currentUser) {
-                    checkboxStates = {};
-                    const userDocRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userDocRef, { progress: {} }); // Overwrite with empty object
+                    updateMetricsAndCharts(); 
+                    
+                    // 1. Instantly save locally for Offline Support
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
+                    
+                    // 2. Sync to Cloud if Online
+                    if (navigator.onLine) {
+                        try {
+                            const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
+                            await setDoc(userDocRef, { data: checkboxStates }, { merge: true });
+                        } catch (err) {
+                            console.error("Cloud save failed, data is safely cached locally.", err);
+                        }
+                    }
                 }
             }
 
             function setupFirestoreListener(userId) {
-                if (unsubscribe) unsubscribe(); // Detach any old listener
-                const userDocRef = doc(db, "users", userId);
+                if (unsubscribe) unsubscribe();
+                // Canvas Environment Path Standard
+                const userDocRef = doc(db, 'artifacts', appId, 'users', userId, 'progress', 'state');
+                
                 unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-                    if (docSnap.exists() && docSnap.data().progress) {
-                        checkboxStates = docSnap.data().progress;
+                    if (docSnap.exists() && docSnap.data().data) {
+                        checkboxStates = docSnap.data().data;
+                        // Cache the latest cloud truth locally
+                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(checkboxStates));
                     } else {
-                        checkboxStates = {};
+                        // If no cloud data, try not to overwrite local if local exists (merging edge case)
+                        if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
+                            checkboxStates = {};
+                        }
                     }
-                    // Load state into checkboxes
-                    document.querySelectorAll('.custom-checkbox').forEach(cb => {
-                        cb.checked = checkboxStates[cb.id] || false;
-                    });
-                    updateProgress();
+                    updateMetricsAndCharts();
+                }, (error) => {
+                    console.error("Firestore listener error:", error);
                 });
             }
 
-            // --- Auth UI Logic ---
+            // --- NETWORK SYNCHRONIZATION ---
+            const networkStatusBadge = document.getElementById('network-status');
+            
+            async function handleConnectionChange() {
+                if (navigator.onLine) {
+                    networkStatusBadge.classList.add('hidden');
+                    // We just came online! Push any offline progress up to the cloud.
+                    if (currentUser) {
+                        const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                        if (localData) {
+                            try {
+                                const parsedData = JSON.parse(localData);
+                                const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
+                                await setDoc(userDocRef, { data: parsedData }, { merge: true });
+                                console.log("Successfully synced offline data to the cloud.");
+                            } catch (e) {
+                                console.error("Auto-sync failed", e);
+                            }
+                        }
+                    }
+                } else {
+                    // We are offline
+                    networkStatusBadge.classList.remove('hidden');
+                }
+            }
+
+            window.addEventListener('online', handleConnectionChange);
+            window.addEventListener('offline', handleConnectionChange);
+            handleConnectionChange(); // Check initial status
+
+            // --- PROGRESSIVE WEB APP (PWA) INJECTION ---
+            function injectPWA() {
+                // Generate a data-uri icon for the manifest
+                const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏆</text></svg>`;
+                const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgIcon)));
+                
+                const manifest = {
+                    name: "GATE CSE Tracker",
+                    short_name: "GATE Tracker",
+                    description: "Master the GATE CSE syllabus systematically.",
+                    start_url: location.href,
+                    display: "standalone",
+                    background_color: "#f8fafc",
+                    theme_color: "#4f46e5",
+                    icons: [{
+                        src: iconUrl,
+                        sizes: "192x192 512x512",
+                        type: "image/svg+xml"
+                    }]
+                };
+                
+                const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+                
+                const link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = manifestUrl;
+                document.head.appendChild(link);
+                
+                // Very basic Service Worker to cache the application shell
+                const swCode = `
+                    const CACHE_NAME = 'gate-tracker-pwa-v1';
+                    self.addEventListener('install', event => {
+                        event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll([location.href])));
+                    });
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            fetch(event.request).catch(() => caches.match(event.request))
+                        );
+                    });
+                `;
+                
+                const swBlob = new Blob([swCode], {type: 'application/javascript'});
+                const swUrl = URL.createObjectURL(swBlob);
+                
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register(swUrl).then(() => {
+                        console.log('PWA Ready: Service Worker registered for offline use.');
+                    }).catch((err) => console.log('SW registration bypassed (expected in sandboxed environments).'));
+                }
+            }
+
+            // --- AUTHENTICATION ---
+            const authScreen = document.getElementById('auth-screen');
+            const initialLoader = document.getElementById('initial-loader');
+            const authCard = document.getElementById('auth-card');
+            const appContainer = document.getElementById('app-container');
+            const userProfileImgContainer = document.getElementById('user-profile-img-container');
+
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (err) {
+                    console.log("Canvas auth unavailable, falling back to UI login");
+                    initialLoader.classList.add('hidden');
+                    authCard.classList.remove('hidden');
+                }
+            };
+
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     currentUser = user;
                     
-                    // Smoothly hide the splash/auth screen
-                    authScreen.classList.add('opacity-0', 'pointer-events-none');
-                    setTimeout(() => authScreen.classList.add('hidden'), 500);
+                    // Animate out Auth Screen
+                    authScreen.classList.add('opacity-0');
+                    setTimeout(() => {
+                        authScreen.classList.add('hidden');
+                        appContainer.classList.remove('hidden');
+                    }, 500);
+
+                    // Set Profile Info
+                    const photo = user.photoURL || `https://ui-avatars.com/api/?name=${user.isAnonymous ? 'Guest' : user.displayName || 'U'}&background=e0e7ff&color=4f46e5`;
+                    const name = user.isAnonymous ? 'Guest User' : (user.displayName || 'Student');
                     
-                    appContainer.classList.remove('hidden');
-                    resetContainer.classList.remove('hidden');
-                    userProfileContainer.innerHTML = `
-                        <img src="${user.photoURL}" alt="User" class="w-8 h-8 rounded-full border border-gray-300">
-                        <span class="font-semibold text-sm text-gray-800">${user.displayName}</span>
+                    userProfileImgContainer.innerHTML = `
+                        <img src="${photo}" alt="User" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover">
+                        <svg class="w-4 h-4 text-slate-400 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     `;
-                    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+                    document.getElementById('dropdown-user-name').textContent = name;
+                    
                     setupFirestoreListener(user.uid);
                 } else {
                     currentUser = null;
-                    
-                    // Hide the loader, show the login card
                     initialLoader.classList.add('hidden');
                     authCard.classList.remove('hidden');
-                    authCard.classList.add('block'); // ensure it displays
-                    
-                    authScreen.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+                    authScreen.classList.remove('hidden', 'opacity-0');
                     appContainer.classList.add('hidden');
-                    resetContainer.classList.add('hidden');
-                    userProfileContainer.innerHTML = '';
                     if (unsubscribe) unsubscribe();
-                    checkboxStates = {};
-                    updateProgress();
                 }
             });
 
-            loginBtn.addEventListener('click', async () => {
-              const originalContent = loginBtn.innerHTML;
-              loginBtn.innerHTML = '<span>Loading...</span>';
-              loginBtn.disabled = true;
-              try {
-                await signInWithPopup(auth, provider);
-              } catch (err) {
-                console.error("Popup sign-in failed:", err);
-                alert("Sign-in error: " + err.message);
-                loginBtn.innerHTML = originalContent;
-                loginBtn.disabled = false;
-              }
+            // Fallback Google Login logic
+            document.getElementById('login-btn').addEventListener('click', async () => {
+                const btn = document.getElementById('login-btn');
+                const orig = btn.innerHTML;
+                btn.innerHTML = `<div class="w-5 h-5 border-2 border-slate-400 border-t-slate-700 rounded-full animate-spin"></div>`;
+                btn.disabled = true;
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (err) {
+                    alert("Sign-in failed. Check console.");
+                    console.error(err);
+                    btn.innerHTML = orig;
+                    btn.disabled = false;
+                }
             });
 
-            // --- Modal Logic ---
-            const modal = document.getElementById('reset-modal');
-            const resetBtn = document.getElementById('reset-btn');
-            const cancelBtn = document.getElementById('cancel-reset');
-            const confirmBtn = document.getElementById('confirm-reset');
-            resetBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-            cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
-            confirmBtn.addEventListener('click', () => {
-                resetAllProgress();
-                modal.classList.add('hidden');
-            });
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
-
-            // --- Tab Logic ---
-            const syllabusTab = document.getElementById('tab-syllabus');
-            const dashboardTab = document.getElementById('tab-dashboard');
-            const syllabusContent = document.getElementById('syllabus-content');
-            const dashboardContent = document.getElementById('dashboard-content');
-
-            syllabusTab.addEventListener('click', () => {
-                syllabusTab.classList.add('active');
-                dashboardTab.classList.remove('active');
-                syllabusContent.classList.remove('hidden');
-                dashboardContent.classList.add('hidden');
+            // --- UI LOGIC ---
+            
+            // Profile Dropdown Toggle
+            const profileTrigger = document.getElementById('user-profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            profileTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('opacity-0');
+                profileDropdown.classList.toggle('pointer-events-none');
+                profileDropdown.classList.toggle('scale-95');
             });
 
-            dashboardTab.addEventListener('click', () => {
-                dashboardTab.classList.add('active');
-                syllabusTab.classList.remove('active');
-                dashboardContent.classList.remove('hidden');
-                syllabusContent.classList.add('hidden');
+            document.addEventListener('click', (e) => {
+                if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                }
             });
 
-            // --- Initial setup ---
+            // Tab Switching Logic (Refactored for 3 tabs)
+            const tabs = [
+                { btn: document.getElementById('tab-syllabus'), view: document.getElementById('syllabus-content') },
+                { btn: document.getElementById('tab-dashboard'), view: document.getElementById('dashboard-content') },
+                { btn: document.getElementById('tab-marks'), view: document.getElementById('marks-content') }
+            ];
+
+            function switchTab(activeBtnId) {
+                tabs.forEach(tab => {
+                    if (tab.btn.id === activeBtnId) {
+                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                        tab.view.classList.remove('hidden');
+                    } else {
+                        tab.btn.className = "flex-1 md:flex-none whitespace-nowrap text-sm font-semibold py-2.5 px-6 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all duration-200";
+                        tab.view.classList.add('hidden');
+                    }
+                });
+            }
+
+            document.getElementById('tab-syllabus').addEventListener('click', () => switchTab('tab-syllabus'));
+            document.getElementById('tab-dashboard').addEventListener('click', () => switchTab('tab-dashboard'));
+            document.getElementById('tab-marks').addEventListener('click', () => switchTab('tab-marks'));
+
+            // Marks Metric Toggle Logic
+            const btnAvg = document.getElementById('toggle-average');
+            const btnMed = document.getElementById('toggle-median');
+            
+            btnAvg.addEventListener('click', () => {
+                currentMarksMetric = 'average';
+                btnAvg.className = "px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-brand-600 shadow-sm transition-all duration-200";
+                btnMed.className = "px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
+                generateMarksTable();
+            });
+            
+            btnMed.addEventListener('click', () => {
+                currentMarksMetric = 'median';
+                btnMed.className = "px-4 py-1.5 text-sm font-semibold rounded-lg bg-white text-purple-600 shadow-sm transition-all duration-200";
+                btnAvg.className = "px-4 py-1.5 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 transition-all duration-200";
+                generateMarksTable();
+            });
+
+            // Modal Utilities
+            const openModal = (modalId, contentId) => {
+                document.getElementById(modalId).classList.remove('opacity-0', 'pointer-events-none');
+                document.getElementById(contentId).classList.remove('scale-95');
+                document.getElementById(contentId).classList.add('scale-100');
+            };
+            
+            const closeModal = (modalId, contentId) => {
+                document.getElementById(modalId).classList.add('opacity-0', 'pointer-events-none');
+                document.getElementById(contentId).classList.remove('scale-100');
+                document.getElementById(contentId).classList.add('scale-95');
+            };
+
+            // Reset Modal Logic
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95'); // Hide dropdown
+                openModal('reset-modal', 'reset-modal-content');
+            });
+            document.getElementById('cancel-reset').addEventListener('click', () => closeModal('reset-modal', 'reset-modal-content'));
+            
+            document.getElementById('confirm-reset').addEventListener('click', async () => {
+                if(currentUser) {
+                    checkboxStates = {};
+                    const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'progress', 'state');
+                    await setDoc(userDocRef, { data: {} });
+                }
+                closeModal('reset-modal', 'reset-modal-content');
+            });
+
+            // Guide Modal Logic
+            document.getElementById('guide-btn').addEventListener('click', () => {
+                profileDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95'); // Hide dropdown
+                openModal('guide-modal', 'guide-modal-content');
+            });
+            document.getElementById('close-guide').addEventListener('click', () => closeModal('guide-modal', 'guide-modal-content'));
+            document.getElementById('got-it-btn').addEventListener('click', () => closeModal('guide-modal', 'guide-modal-content'));
+
+            // Logout Logic
+            document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+            // Bootstrap
             generateSyllabusHTML();
+            generateMarksTable();
             initCharts();
+            initTrendAnalytics();
             container.addEventListener('change', handleCheckboxChange);
+            
+            // Fast Boot: Hydrate UI instantly from local cache if available
+            const cachedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (cachedData) {
+                try {
+                    checkboxStates = JSON.parse(cachedData);
+                    updateMetricsAndCharts();
+                } catch(e) {}
+            }
+            
+            initAuth(); // Fire auth init
+            injectPWA(); // Register offline capabilities
         });
     </script>
 </body>
